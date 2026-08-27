@@ -130,11 +130,15 @@ def take_screenshot() -> str:
     """
     Captures a full-screen screenshot of the desktop and saves it.
     """
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    filepath = SCREENSHOTS_DIR / f"screenshot_{timestamp}.png"
-    screenshot = pyautogui.screenshot()
-    screenshot.save(str(filepath))
-    return f"Screenshot captured and saved to {filepath.name}."
+    try:
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filepath = SCREENSHOTS_DIR / f"screenshot_{timestamp}.png"
+        screenshot = pyautogui.screenshot()
+        screenshot.save(str(filepath))
+        return f"Screenshot captured and saved to {filepath.name}."
+    except Exception as e:
+        return f"Unable to capture screenshot (screen may be locked or display inactive): {str(e)}"
+
 
 def play_on_youtube(query: str) -> str:
     """
