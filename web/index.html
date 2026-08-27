@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>J.A.R.V.I.S. Mobile</title>
+    <title>J.A.R.V.I.S. Mobile AI</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00E5FF">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #070A10;
-            --card-bg: #0F1420;
-            --card-border: #1B2438;
+            --bg: #050811;
+            --card-bg: #0A0F1D;
+            --card-border: #16233B;
             --cyan: #00E5FF;
-            --blue: #0099FF;
-            --gold: #FFB300;
+            --blue: #0088FF;
+            --gold: #FFB800;
             --green: #00FF88;
             --red: #FF3366;
             --text: #E6EDF3;
-            --text-dim: #7D8590;
+            --text-dim: #717D96;
         }
 
         * {
@@ -41,7 +41,7 @@
 
         /* Header */
         header {
-            padding: 16px 20px;
+            padding: 14px 18px;
             background: var(--card-bg);
             border-bottom: 1px solid var(--card-border);
             display: flex;
@@ -51,21 +51,21 @@
 
         .brand-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 900;
             letter-spacing: 2px;
             color: var(--cyan);
-            text-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+            text-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
         }
 
         .brand-sub {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--text-dim);
             letter-spacing: 1px;
         }
 
         .status-badge {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--green);
             display: flex;
@@ -74,8 +74,8 @@
         }
 
         .status-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             background: var(--green);
             border-radius: 50%;
             box-shadow: 0 0 8px var(--green);
@@ -90,81 +90,41 @@
         /* Main Container */
         main {
             flex: 1;
-            padding: 16px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
+            gap: 12px;
         }
 
-        /* Arc Reactor Container */
-        .reactor-card {
+        /* Digital Face Card */
+        .face-card {
             width: 100%;
             max-width: 400px;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 16px;
-            padding: 20px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
         }
 
-        .arc-container {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin: 10px 0;
+        .face-canvas-container {
+            width: 220px;
+            height: 220px;
             cursor: pointer;
-        }
-
-        .arc-svg {
-            width: 100%;
-            height: 100%;
-            transform-origin: center;
-            animation: rotate-arc 12s linear infinite;
-        }
-
-        @keyframes rotate-arc {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .arc-core {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 64px;
-            height: 64px;
-            background: radial-gradient(circle, #FFFFFF 0%, var(--cyan) 50%, #004488 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 25px var(--cyan), inset 0 0 10px #FFFFFF;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-
-        .arc-core.listening {
-            background: radial-gradient(circle, #FFFFFF 0%, var(--gold) 50%, #884400 100%);
-            box-shadow: 0 0 35px var(--gold);
-        }
-
-        .arc-core.speaking {
-            background: radial-gradient(circle, #FFFFFF 0%, var(--green) 50%, #006633 100%);
-            box-shadow: 0 0 35px var(--green);
         }
 
         .state-text {
             font-family: 'Orbitron', sans-serif;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             letter-spacing: 2px;
             color: var(--cyan);
-            margin-top: 8px;
+            margin-top: 4px;
         }
 
         /* Metrics Bar */
@@ -173,25 +133,25 @@
             max-width: 400px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
         }
 
         .metric-box {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 12px 14px;
+            border-radius: 10px;
+            padding: 10px 12px;
         }
 
         .metric-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--text-dim);
             letter-spacing: 0.5px;
         }
 
         .metric-val {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: var(--cyan);
             margin-top: 2px;
@@ -204,20 +164,20 @@
             flex: 1;
             background: var(--card-bg);
             border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 14px;
+            border-radius: 12px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            min-height: 140px;
-            max-height: 200px;
+            min-height: 120px;
+            max-height: 180px;
         }
 
         .console-header {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: var(--text-dim);
             letter-spacing: 1px;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
         }
@@ -226,8 +186,8 @@
             flex: 1;
             overflow-y: auto;
             font-family: monospace;
-            font-size: 12px;
-            line-height: 1.5;
+            font-size: 11px;
+            line-height: 1.4;
             color: #C9D1D9;
         }
 
@@ -242,10 +202,10 @@
         .controls-card {
             width: 100%;
             max-width: 400px;
-            padding: 10px 0 16px 0;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            padding-bottom: 12px;
         }
 
         .input-row {
@@ -255,12 +215,12 @@
 
         .cmd-input {
             flex: 1;
-            background: #080C14;
+            background: #060A14;
             border: 1px solid var(--card-border);
             border-radius: 10px;
             padding: 12px 14px;
             font-family: 'Rajdhani', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text);
             outline: none;
         }
@@ -270,7 +230,7 @@
         }
 
         .btn-send {
-            background: #1B2438;
+            background: #16233B;
             border: 1px solid var(--card-border);
             color: var(--cyan);
             border-radius: 10px;
@@ -284,9 +244,9 @@
             background: linear-gradient(135deg, #00E5FF 0%, #0077FF 100%);
             border: none;
             border-radius: 12px;
-            padding: 15px;
+            padding: 14px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: #000;
             letter-spacing: 1px;
@@ -304,34 +264,26 @@
     <!-- Header -->
     <header>
         <div>
-            <div class="brand-title">J . A . R . V . I . S .</div>
-            <div class="brand-sub">MOBILE STARK LINK</div>
+            <div class="brand-title">J · A · R · V · I · S</div>
+            <div class="brand-sub">DIGITAL AI SYNAPSE</div>
         </div>
         <div class="status-badge">
             <div class="status-dot"></div>
-            <span>LINKED</span>
+            <span>ONLINE</span>
         </div>
     </header>
 
     <!-- Main Content -->
     <main>
-        <!-- Arc Reactor -->
-        <div class="reactor-card">
-            <div class="arc-container" id="arcButton" onclick="toggleVoice()">
-                <svg class="arc-svg" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="46" fill="none" stroke="#1B2438" stroke-width="3"/>
-                    <circle cx="50" cy="50" r="46" fill="none" stroke="#00E5FF" stroke-width="2" stroke-dasharray="10 8"/>
-                    <circle cx="50" cy="50" r="38" fill="none" stroke="#0099FF" stroke-width="1.5" stroke-dasharray="4 6"/>
-                    <circle cx="50" cy="50" r="28" fill="#08101C" stroke="#00E5FF" stroke-width="1.5"/>
-                </svg>
-                <div class="arc-core" id="arcCore">
-                    <span style="font-size: 24px;">🎙️</span>
-                </div>
+        <!-- Digital Face Card -->
+        <div class="face-card">
+            <div class="face-canvas-container" onclick="toggleVoice()">
+                <canvas id="faceCanvas" width="220" height="220"></canvas>
             </div>
-            <div class="state-text" id="stateText">STANDBY</div>
+            <div class="state-text" id="stateText">● AI FACE: ONLINE ●</div>
         </div>
 
-        <!-- Metrics -->
+        <!-- Metrics Grid -->
         <div class="metrics-grid">
             <div class="metric-box">
                 <div class="metric-label">PC CPU USAGE</div>
@@ -358,7 +310,7 @@
                 <span onclick="clearLog()" style="cursor:pointer; color:var(--text-dim);">CLEAR</span>
             </div>
             <div class="console-log" id="consoleLog">
-                <div>[SYSTEM] Mobile link active. Tap reactor or speak to begin.</div>
+                <div>[SYSTEM] Digital AI Synapse Linked. Tap face or speak to begin.</div>
             </div>
         </div>
 
@@ -368,7 +320,7 @@
                 <span>🎙️</span> <span id="btnText">ACTIVATE VOICE</span>
             </button>
             <div class="input-row">
-                <input type="text" id="cmdInput" class="cmd-input" placeholder="Type command (e.g. 'Open Chrome', 'System status')..." onkeydown="if(event.key==='Enter') sendCommand()">
+                <input type="text" id="cmdInput" class="cmd-input" placeholder="Type command (e.g. 'Open VS Code', 'Play music')..." onkeydown="if(event.key==='Enter') sendCommand()">
                 <button class="btn-send" onclick="sendCommand()">SEND</button>
             </div>
         </div>
@@ -379,7 +331,138 @@
 
     <script>
         let isListening = false;
+        let isSpeaking = false;
+        let isThinking = false;
+        let stateColor = "#00E5FF";
         let recognition = null;
+
+        // Digital Face Canvas Drawing
+        const canvas = document.getElementById('faceCanvas');
+        const ctx = canvas.getContext('2d');
+        const cx = 110, cy = 110;
+        let blinkProgress = 1.0;
+        let isBlinking = false;
+        let lastBlink = Date.now();
+        let scanlineY = 0;
+        let mouthAmps = new Array(12).fill(0.1);
+
+        function drawFace() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const now = Date.now();
+
+            // Blink logic
+            if (!isBlinking && now - lastBlink > 4000) {
+                isBlinking = true;
+                lastBlink = now;
+            }
+            if (isBlinking) {
+                blinkProgress -= 0.25;
+                if (blinkProgress <= 0) {
+                    blinkProgress = 0;
+                    isBlinking = false;
+                }
+            } else {
+                if (blinkProgress < 1.0) blinkProgress += 0.25;
+            }
+
+            scanlineY = (scanlineY + 2) % 220;
+
+            // 1. Head Wireframe Contour
+            const hw = 85, hh = 92;
+            ctx.strokeStyle = stateColor;
+            ctx.fillStyle = '#060B16';
+            ctx.lineWidth = 1.5;
+
+            ctx.beginPath();
+            ctx.moveTo(cx - hw * 0.6, cy - hh * 0.8);
+            ctx.lineTo(cx + hw * 0.6, cy - hh * 0.8);
+            ctx.lineTo(cx + hw * 0.85, cy - hh * 0.3);
+            ctx.lineTo(cx + hw * 0.75, cy + hh * 0.4);
+            ctx.lineTo(cx + hw * 0.35, cy + hh * 0.85);
+            ctx.lineTo(cx - hw * 0.35, cy + hh * 0.85);
+            ctx.lineTo(cx - hw * 0.75, cy + hh * 0.4);
+            ctx.lineTo(cx - hw * 0.85, cy - hh * 0.3);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // Forehead Node
+            const fhy = cy - hh * 0.55;
+            ctx.fillStyle = stateColor;
+            ctx.beginPath();
+            ctx.arc(cx, fhy, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 2. Eyes
+            const eyeSpacing = hw * 0.38;
+            const eyeY = cy - hh * 0.15;
+            const eyeW = 20;
+            const eyeH = 12 * Math.max(0, blinkProgress);
+
+            [-1, 1].forEach(side => {
+                const ex = cx + (side * eyeSpacing);
+
+                // Eyebrow
+                ctx.beginPath();
+                ctx.moveTo(ex - eyeW * 0.6, eyeY - 10);
+                ctx.lineTo(ex + eyeW * 0.6, eyeY - 10);
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                if (eyeH > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(ex - eyeW, eyeY);
+                    ctx.lineTo(ex - eyeW * 0.5, eyeY - eyeH);
+                    ctx.lineTo(ex + eyeW * 0.5, eyeY - eyeH);
+                    ctx.lineTo(ex + eyeW, eyeY);
+                    ctx.lineTo(ex + eyeW * 0.5, eyeY + eyeH);
+                    ctx.lineTo(ex - eyeW * 0.5, eyeY + eyeH);
+                    ctx.closePath();
+                    ctx.fillStyle = '#040810';
+                    ctx.fill();
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+
+                    // Glowing Iris
+                    ctx.fillStyle = stateColor;
+                    ctx.beginPath();
+                    ctx.arc(ex, eyeY, Math.min(5, eyeH * 0.8), 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            });
+
+            // 3. Dynamic Mouth
+            const mouthY = cy + hh * 0.52;
+            const totalMouthW = hw * 0.75;
+            const barW = totalMouthW / mouthAmps.length;
+            const startX = cx - (totalMouthW / 2);
+
+            ctx.fillStyle = stateColor;
+            mouthAmps.forEach((val, i) => {
+                let target = 0.08 + Math.sin(now * 0.003 + i * 0.5) * 0.05;
+                if (isSpeaking) target = 0.3 + Math.random() * 0.7;
+                else if (isListening) target = 0.15 + Math.random() * 0.45;
+
+                mouthAmps[i] += (target - mouthAmps[i]) * 0.4;
+                const barH = mouthAmps[i] * 20;
+                const bx = startX + (i * barW);
+
+                ctx.fillRect(bx + 1, mouthY - barH / 2, barW - 2, barH);
+            });
+
+            // 4. Scanline
+            ctx.strokeStyle = stateColor;
+            ctx.setLineDash([4, 6]);
+            ctx.beginPath();
+            ctx.moveTo(cx - hw, scanlineY);
+            ctx.lineTo(cx + hw, scanlineY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            requestAnimationFrame(drawFace);
+        }
+
+        requestAnimationFrame(drawFace);
 
         // Initialize Speech Recognition on Mobile
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -391,7 +474,7 @@
 
             recognition.onstart = function() {
                 isListening = true;
-                setReactorState('LISTENING', 'listening');
+                setAIState('LISTENING', '#FFB800');
                 log('VOICE', 'Listening for your command...');
             };
 
@@ -403,14 +486,14 @@
 
             recognition.onerror = function(event) {
                 isListening = false;
-                setReactorState('STANDBY', '');
-                log('VOICE', 'Speech recognition error: ' + event.error);
+                setAIState('ONLINE', '#00E5FF');
+                log('VOICE', 'Speech error: ' + event.error);
             };
 
             recognition.onend = function() {
                 isListening = false;
-                if (document.getElementById('stateText').innerText === 'LISTENING') {
-                    setReactorState('STANDBY', '');
+                if (document.getElementById('stateText').innerText.includes('LISTENING')) {
+                    setAIState('ONLINE', '#00E5FF');
                 }
             };
         }
@@ -427,10 +510,10 @@
             }
         }
 
-        function setReactorState(text, coreClass) {
-            document.getElementById('stateText').innerText = text;
-            const core = document.getElementById('arcCore');
-            core.className = 'arc-core ' + coreClass;
+        function setAIState(text, color) {
+            stateColor = color;
+            document.getElementById('stateText').innerText = `● AI FACE: ${text} ●`;
+            document.getElementById('stateText').style.color = color;
             document.getElementById('btnText').innerText = text === 'LISTENING' ? 'LISTENING...' : 'ACTIVATE VOICE';
         }
 
@@ -460,7 +543,8 @@
         }
 
         async function executeCommand(command) {
-            setReactorState('THINKING', 'speaking');
+            isThinking = true;
+            setAIState('THINKING', '#0088FF');
             try {
                 const response = await fetch('/api/command', {
                     method: 'POST',
@@ -469,33 +553,41 @@
                 });
                 const data = await response.json();
                 
+                isThinking = false;
                 if (data.action) {
                     log('ACTION', data.action);
                 }
                 log('JARVIS', data.reply);
                 speakReply(data.reply);
             } catch (err) {
+                isThinking = false;
                 log('ERROR', 'Failed to communicate with PC Core: ' + err);
-                setReactorState('STANDBY', '');
+                setAIState('ONLINE', '#00E5FF');
             }
         }
 
         function speakReply(text) {
-            setReactorState('SPEAKING', 'speaking');
+            isSpeaking = true;
+            setAIState('SPEAKING', '#00FF88');
             
-            // Try fetching Edge-TTS audio stream from server
             const audio = document.getElementById('ttsAudio');
             audio.src = `/api/speak?text=${encodeURIComponent(text)}`;
             audio.play().then(() => {
-                audio.onended = () => setReactorState('STANDBY', '');
+                audio.onended = () => {
+                    isSpeaking = false;
+                    setAIState('ONLINE', '#00E5FF');
+                };
             }).catch(() => {
-                // Fallback to browser mobile synthesis
                 if ('speechSynthesis' in window) {
                     const utter = new SpeechSynthesisUtterance(text);
-                    utter.onend = () => setReactorState('STANDBY', '');
+                    utter.onend = () => {
+                        isSpeaking = false;
+                        setAIState('ONLINE', '#00E5FF');
+                    };
                     window.speechSynthesis.speak(utter);
                 } else {
-                    setReactorState('STANDBY', '');
+                    isSpeaking = false;
+                    setAIState('ONLINE', '#00E5FF');
                 }
             });
         }

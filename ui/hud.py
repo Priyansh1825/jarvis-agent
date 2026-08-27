@@ -1,6 +1,7 @@
 import os
 import math
 import time
+import random
 import threading
 import datetime
 import tkinter as tk
@@ -9,26 +10,24 @@ from config import ASSISTANT_NAME, USER_NAME, GEMINI_API_KEY
 from core.sys_info import get_system_diagnostics
 from core.brain import jarvis_brain
 from core.voice import jarvis_voice
-from core.tools import JARVIS_TOOL_FUNCTIONS
 
 # ====================================================================
-# CINEMATIC CYBERPUNK / IRON MAN PALETTE
+# CINEMATIC CYBERPUNK / DIGITAL AI PALETTE
 # ====================================================================
 THEME = {
-    "bg": "#060911",               # Deep Obsidian
-    "card_bg": "#0B101D",          # Glassmorphism Card
-    "card_inner": "#070B14",       # Deep Tech Inset
-    "card_border": "#162238",      # Subtle Border
+    "bg": "#050811",               # Deep Cosmic Void
+    "card_bg": "#0A0F1D",          # Hologram Glass Card
+    "card_inner": "#060A14",       # Deep Tech Inset
+    "card_border": "#16233B",      # Cyber Border
     "glow_border": "#00E5FF",      # Active Neon Glow
-    "cyan": "#00E5FF",             # Stark Cyan
-    "cyan_glow": "#00E5FF33",      # Alpha Glow
-    "arc_blue": "#0088FF",         # Reactor Core Blue
-    "gold": "#FFB800",             # Warning / Wake Gold
-    "green": "#00FF88",            # Nominal / Active Green
-    "red": "#FF3366",              # Danger Red
-    "purple": "#BD00FF",           # Quantum Purple
+    "cyan": "#00E5FF",             # Stark Cyan (Default / Standby)
+    "arc_blue": "#0088FF",         # Core Blue
+    "gold": "#FFB800",             # Listening / Wake Gold
+    "green": "#00FF88",            # Speaking / Matrix Green
+    "red": "#FF3366",              # Alert Red
+    "purple": "#9D00FF",           # Neural Core Purple
     "text_main": "#E6EDF3",        # Crisp White-Blue
-    "text_dim": "#717D96",         # Subdued Gray-Blue
+    "text_dim": "#717D96",         # Subdued Tech Gray
     "font_tech": "Consolas",
     "font_main": "Segoe UI"
 }
@@ -36,13 +35,14 @@ THEME = {
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-class HolographicArcReactor(tk.Canvas):
+class CyberDigitalFace(tk.Canvas):
     """
-    Advanced Multi-Layer Holographic Arc Reactor:
-    - Dual counter-rotating tech gear rings
-    - Pulsing particle energy core
-    - Radial degree tick marks
-    - Audio-reactive sound wave visualizer bars
+    Cinematic Digital AI Face:
+    - Glowing Cybernetic Eyes with natural blinking & tracking
+    - Angular Forehead & Jaw Wireframe Armor Contours
+    - Dynamic Equalizer Mouth that animates with speech and audio
+    - Sweeping Holographic Scanline
+    - State-responsive emotions (Standby, Listening, Thinking, Speaking)
     """
     def __init__(self, master, size=240, **kwargs):
         super().__init__(
@@ -54,92 +54,176 @@ class HolographicArcReactor(tk.Canvas):
             **kwargs
         )
         self.size = size
-        self.center = size // 2
-        self.angle_outer = 0
-        self.angle_inner = 0
-        self.pulse = 0
-        self.pulse_dir = 1
+        self.cx = size // 2
+        self.cy = size // 2
+        
+        # State
         self.state_color = THEME["cyan"]
-        self.status_text = "STANDBY"
-        self.audio_bars = [0.2] * 16
+        self.status_text = "ONLINE"
+        self.is_speaking = False
+        self.is_listening = False
+        self.is_thinking = False
+        
+        # Animation parameters
+        self.blink_progress = 1.0       # 1.0 = fully open, 0.0 = fully closed
+        self.is_blinking = False
+        self.last_blink_time = time.time()
+        self.scanline_y = 0
+        self.pulse = 0.0
+        self.pulse_dir = 1
+        self.eye_offset_x = 0
+        self.mouth_amplitudes = [0.1] * 12
+        
         self._running = True
         self.after(35, self._animate)
 
     def set_state(self, status: str, color: str = THEME["cyan"]):
         self.status_text = status
         self.state_color = color
+        self.is_speaking = (status == "SPEAKING")
+        self.is_listening = (status == "LISTENING" or status == "WAKING UP")
+        self.is_thinking = (status == "THINKING" or status == "EXECUTING")
 
     def _animate(self):
         if not self._running:
             return
             
         self.delete("all")
-        c = self.center
+        cx, cy = self.cx, self.cy
         
-        # 1. Outer Tech Grid & Degree Ticks
-        r_outer = int(self.size * 0.45)
-        for i in range(0, 360, 15):
-            rad = math.radians(i)
-            tick_len = 8 if i % 45 == 0 else 4
-            x1 = c + math.cos(rad) * (r_outer - tick_len)
-            y1 = c + math.sin(rad) * (r_outer - tick_len)
-            x2 = c + math.cos(rad) * r_outer
-            y2 = c + math.sin(rad) * r_outer
-            color = self.state_color if i % 45 == 0 else "#152238"
-            self.create_line(x1, y1, x2, y2, fill=color, width=1.5 if i % 45 == 0 else 1)
-
-        # 2. Pulsing Outer Glow Atmosphere
-        self.pulse += 0.06 * self.pulse_dir
+        # 1. Pulse timer & Scanline
+        self.pulse += 0.08 * self.pulse_dir
         if self.pulse > 1.0:
             self.pulse_dir = -1
         elif self.pulse < 0.0:
             self.pulse_dir = 1
             
-        glow_r = int(self.size * 0.40 + self.pulse * 5)
-        self.create_oval(
-            c - glow_r, c - glow_r, c + glow_r, c + glow_r, 
-            outline=self.state_color, width=1.5
+        self.scanline_y = (self.scanline_y + 2.5) % self.size
+        
+        # 2. Blink logic
+        now = time.time()
+        if not self.is_blinking and now - self.last_blink_time > random.uniform(3.0, 5.5):
+            self.is_blinking = True
+            self.last_blink_time = now
+
+        if self.is_blinking:
+            self.blink_progress -= 0.25
+            if self.blink_progress <= 0.0:
+                self.blink_progress = 0.0
+                self.is_blinking = False
+        else:
+            if self.blink_progress < 1.0:
+                self.blink_progress += 0.25
+                if self.blink_progress > 1.0:
+                    self.blink_progress = 1.0
+
+        # Eye tracking jitter when thinking
+        if self.is_thinking:
+            self.eye_offset_x = math.sin(now * 8) * 4
+        else:
+            self.eye_offset_x = 0
+
+        # 3. Outer Cybernetic Head Contours (Hologram Polygon Armor)
+        head_w = self.size * 0.42
+        head_h = self.size * 0.46
+        
+        # Head contour points (Forehead, Temples, Cheeks, Chin)
+        pts = [
+            (cx - head_w * 0.6, cy - head_h * 0.8),   # Top Left
+            (cx + head_w * 0.6, cy - head_h * 0.8),   # Top Right
+            (cx + head_w * 0.85, cy - head_h * 0.3),  # Temple Right
+            (cx + head_w * 0.75, cy + head_h * 0.4),  # Cheek Right
+            (cx + head_w * 0.35, cy + head_h * 0.85), # Jaw Right
+            (cx - head_w * 0.35, cy + head_h * 0.85), # Jaw Left
+            (cx - head_w * 0.75, cy + head_h * 0.4),  # Cheek Left
+            (cx - head_w * 0.85, cy - head_h * 0.3),  # Temple Left
+        ]
+        
+        # Draw Head Wireframe
+        self.create_polygon(pts, outline=self.state_color, fill="#070D18", width=1.5)
+        
+        # Forehead Quantum Data Node
+        forehead_y = cy - head_h * 0.55
+        self.create_oval(cx - 6, forehead_y - 6, cx + 6, forehead_y + 6, fill=self.state_color, outline="#FFFFFF")
+        self.create_line(cx - head_w * 0.4, forehead_y, cx + head_w * 0.4, forehead_y, fill=self.state_color, width=1)
+
+        # 4. Digital Eyes (Left & Right)
+        eye_spacing = head_w * 0.38
+        eye_y = cy - head_h * 0.15
+        eye_w = 24
+        eye_h = 14 * self.blink_progress
+        
+        for side in [-1, 1]:
+            ex = cx + (side * eye_spacing) + self.eye_offset_x
+            
+            # Eyebrow Plate
+            brow_tilt = 3 if self.is_listening else (-2 if self.is_thinking else 0)
+            self.create_line(
+                ex - eye_w * 0.6, eye_y - 12 + (side * brow_tilt),
+                ex + eye_w * 0.6, eye_y - 12 - (side * brow_tilt),
+                fill=self.state_color, width=2.5
+            )
+            
+            if eye_h > 1:
+                # Eye Socket
+                self.create_polygon([
+                    (ex - eye_w, eye_y),
+                    (ex - eye_w * 0.5, eye_y - eye_h),
+                    (ex + eye_w * 0.5, eye_y - eye_h),
+                    (ex + eye_w, eye_y),
+                    (ex + eye_w * 0.5, eye_y + eye_h),
+                    (ex - eye_w * 0.5, eye_y + eye_h),
+                ], outline=self.state_color, fill="#040810", width=1.5)
+                
+                # Glowing Iris & Pupil
+                iris_r = min(6, eye_h * 0.8)
+                self.create_oval(
+                    ex - iris_r, eye_y - iris_r, ex + iris_r, eye_y + iris_r,
+                    fill=self.state_color, outline="#FFFFFF", width=1
+                )
+
+        # 5. Cheek Tech Nodes & Sensor Lines
+        cheek_y = cy + head_h * 0.2
+        for side in [-1, 1]:
+            kx = cx + (side * head_w * 0.55)
+            self.create_line(kx, cheek_y - 10, kx, cheek_y + 10, fill=self.state_color, width=1.5)
+            self.create_oval(kx - 3, cheek_y - 3, kx + 3, cheek_y + 3, fill=self.state_color, outline="")
+
+        # 6. Dynamic Audio Equalizer Mouth
+        mouth_y = cy + head_h * 0.52
+        num_bars = len(self.mouth_amplitudes)
+        total_mouth_w = head_w * 0.75
+        bar_w = total_mouth_w / num_bars
+        start_x = cx - (total_mouth_w / 2)
+
+        for i in range(num_bars):
+            if self.is_speaking:
+                target = random.uniform(0.3, 1.0)
+            elif self.is_listening:
+                target = random.uniform(0.15, 0.55)
+            else:
+                target = 0.08 + math.sin(now * 3 + i * 0.5) * 0.05
+
+            self.mouth_amplitudes[i] += (target - self.mouth_amplitudes[i]) * 0.4
+            bar_h = self.mouth_amplitudes[i] * 22
+            bx = start_x + (i * bar_w)
+            
+            # Symmetrical Equalizer Bar for Mouth
+            self.create_rectangle(
+                bx + 1, mouth_y - bar_h / 2, bx + bar_w - 1, mouth_y + bar_h / 2,
+                fill=self.state_color, outline=""
+            )
+
+        # 7. Sweeping Holographic Scanline
+        self.create_line(
+            cx - head_w, self.scanline_y, cx + head_w, self.scanline_y,
+            fill="#00E5FF", width=1, dash=(4, 6)
         )
 
-        # 3. Rotating Outer Gear Segments (Clockwise)
-        self.angle_outer = (self.angle_outer + 1.5) % 360
-        r_gear = int(self.size * 0.35)
-        self.create_oval(c - r_gear, c - r_gear, c + r_gear, c + r_gear, outline="#111B2C", width=6)
-        
-        num_outer_segments = 10
-        for i in range(num_outer_segments):
-            theta = math.radians(self.angle_outer + i * (360 / num_outer_segments))
-            x1 = c + math.cos(theta) * (r_gear - 8)
-            y1 = c + math.sin(theta) * (r_gear - 8)
-            x2 = c + math.cos(theta) * (r_gear + 4)
-            y2 = c + math.sin(theta) * (r_gear + 4)
-            self.create_line(x1, y1, x2, y2, fill=self.state_color, width=3.5)
-
-        # 4. Counter-Rotating Inner Tech Ring (Counter-Clockwise)
-        self.angle_inner = (self.angle_inner - 2.5) % 360
-        r_inner_ring = int(self.size * 0.23)
-        self.create_oval(c - r_inner_ring, c - r_inner_ring, c + r_inner_ring, c + r_inner_ring, outline=self.state_color, width=1.5)
-        
-        num_inner_teeth = 6
-        for i in range(num_inner_teeth):
-            theta = math.radians(self.angle_inner + i * (360 / num_inner_teeth))
-            x1 = c + math.cos(theta) * (r_inner_ring - 5)
-            y1 = c + math.sin(theta) * (r_inner_ring - 5)
-            x2 = c + math.cos(theta) * (r_inner_ring + 5)
-            y2 = c + math.sin(theta) * (r_inner_ring + 5)
-            self.create_line(x1, y1, x2, y2, fill="#FFFFFF", width=2)
-
-        # 5. Core Reactor Energy Core
-        r_core_bg = int(self.size * 0.14)
-        self.create_oval(c - r_core_bg, c - r_core_bg, c + r_core_bg, c + r_core_bg, fill="#040810", outline=self.state_color, width=2)
-
-        r_core = int(self.size * 0.08 + self.pulse * 3)
-        self.create_oval(c - r_core, c - r_core, c + r_core, c + r_core, fill=self.state_color, outline="#FFFFFF", width=1.5)
-
-        # 6. Status Text (HUD Cyber Style)
+        # 8. Status Label
         self.create_text(
-            c, self.size - 14, 
-            text=f"● {self.status_text} ●", 
+            cx, self.size - 12, 
+            text=f"● AI FACE: {self.status_text} ●", 
             fill=self.state_color, 
             font=(THEME["font_tech"], 10, "bold")
         )
@@ -150,62 +234,14 @@ class HolographicArcReactor(tk.Canvas):
         self._running = False
 
 
-class SoundWaveVisualizer(tk.Canvas):
-    """Animated Sci-Fi Sound Wave Visualizer bar graph."""
-    def __init__(self, master, width=240, height=36, **kwargs):
-        super().__init__(master, width=width, height=height, bg=THEME["card_bg"], highlightthickness=0, **kwargs)
-        self.w = width
-        self.h = height
-        self.num_bars = 24
-        self.heights = [0.1] * self.num_bars
-        self.is_active = False
-        self.active_color = THEME["cyan"]
-        self._running = True
-        self.after(50, self._animate)
-
-    def set_active(self, active: bool, color: str = THEME["cyan"]):
-        self.is_active = active
-        self.active_color = color
-
-    def _animate(self):
-        if not self._running:
-            return
-        self.delete("all")
-        bar_w = (self.w - (self.num_bars * 2)) / self.num_bars
-        mid_y = self.h / 2
-
-        import random
-        for i in range(self.num_bars):
-            if self.is_active:
-                target = random.uniform(0.2, 0.95)
-            else:
-                target = 0.08 + math.sin(time.time() * 3 + i * 0.4) * 0.05
-
-            self.heights[i] += (target - self.heights[i]) * 0.3
-            bar_h = self.heights[i] * (self.h * 0.8)
-            x = i * (bar_w + 2) + 2
-            
-            # Draw symmetrical sound wave
-            color = self.active_color if self.is_active else "#152238"
-            self.create_rectangle(
-                x, mid_y - bar_h / 2, x + bar_w, mid_y + bar_h / 2,
-                fill=color, outline=""
-            )
-
-        self.after(40, self._animate)
-
-    def stop(self):
-        self._running = False
-
-
 class JarvisHUD(ctk.CTk):
     def __init__(self):
         super().__init__()
         
-        # Futuristic Window Setup
-        self.title("J.A.R.V.I.S. // STARK INDUSTRIES MARK VII")
-        self.geometry("1020x720")
-        self.minsize(860, 640)
+        # Futuristic Cyber Window Setup
+        self.title("J.A.R.V.I.S. // STARK INDUSTRIES MARK VII - DIGITAL AI")
+        self.geometry("1040x730")
+        self.minsize(880, 640)
         self.configure(fg_color=THEME["bg"])
         
         self.is_processing = False
@@ -223,7 +259,7 @@ class JarvisHUD(ctk.CTk):
         self._start_wake_word_thread()
 
     def _build_top_hud_banner(self):
-        """Top Holographic Banner with Cyber Metrics, Time, and Status"""
+        """Top Holographic Banner"""
         top_frame = ctk.CTkFrame(
             self, 
             fg_color=THEME["card_bg"], 
@@ -233,7 +269,6 @@ class JarvisHUD(ctk.CTk):
         )
         top_frame.pack(fill="x", padx=16, pady=(14, 8))
 
-        # Brand Title & Hologram Subtitle
         brand_box = ctk.CTkFrame(top_frame, fg_color="transparent")
         brand_box.pack(side="left", padx=18, pady=10)
 
@@ -247,13 +282,12 @@ class JarvisHUD(ctk.CTk):
 
         sub_lbl = ctk.CTkLabel(
             brand_box, 
-            text="STARK INDUSTRIES MARK VII · QUANTUM CLOUD LINK", 
+            text="DIGITAL AI AVATAR · STARK MARK VII PROTOCOL", 
             font=ctk.CTkFont(family=THEME["font_tech"], size=9, weight="bold"),
             text_color=THEME["text_dim"]
         )
         sub_lbl.pack(anchor="w")
 
-        # Right Status Ticker
         status_box = ctk.CTkFrame(top_frame, fg_color="transparent")
         status_box.pack(side="right", padx=18, pady=10)
 
@@ -277,40 +311,37 @@ class JarvisHUD(ctk.CTk):
         self.cloud_badge.pack(anchor="e")
 
     def _build_main_grid(self):
-        """Two-Column Cyber Layout: Left (Reactor + Gauges), Right (Log + Quick Action Deck)"""
+        """Two-Column Cyber Layout: Left (Digital Face + Gauges), Right (Log + Shortcuts)"""
         grid_frame = ctk.CTkFrame(self, fg_color="transparent")
         grid_frame.pack(fill="both", expand=True, padx=16, pady=4)
 
         # -------------------------------------------------------------
-        # LEFT COLUMN (Reactor Core + Hardware Telemetry)
+        # LEFT COLUMN (Digital AI Avatar Face + Hardware Telemetry)
         # -------------------------------------------------------------
         left_col = ctk.CTkFrame(grid_frame, width=340, fg_color="transparent")
         left_col.pack(side="left", fill="y", padx=(0, 10))
 
-        # Reactor Card
-        reactor_card = ctk.CTkFrame(
+        # Face Card
+        face_card = ctk.CTkFrame(
             left_col, 
             fg_color=THEME["card_bg"], 
             corner_radius=12, 
             border_width=1, 
             border_color=THEME["card_border"]
         )
-        reactor_card.pack(fill="x", pady=(0, 8))
+        face_card.pack(fill="x", pady=(0, 8))
 
         core_lbl = ctk.CTkLabel(
-            reactor_card, 
-            text="ARC REACTOR TELEMETRY", 
+            face_card, 
+            text="SYNAPSE AVATAR MATRIX", 
             font=ctk.CTkFont(family=THEME["font_tech"], size=10, weight="bold"),
             text_color=THEME["text_dim"]
         )
         core_lbl.pack(pady=(10, 0))
 
-        self.reactor = HolographicArcReactor(reactor_card, size=210)
-        self.reactor.pack(pady=(6, 0))
-
-        # Audio Waveform Visualizer
-        self.sound_wave = SoundWaveVisualizer(reactor_card, width=220, height=28)
-        self.sound_wave.pack(pady=(4, 10))
+        # Digital Face Avatar
+        self.ai_face = CyberDigitalFace(face_card, size=230)
+        self.ai_face.pack(pady=(6, 12))
 
         # Hardware Metrics Card
         metrics_card = ctk.CTkFrame(
@@ -378,7 +409,6 @@ class JarvisHUD(ctk.CTk):
         btn_grid = ctk.CTkFrame(actions_bar, fg_color="transparent")
         btn_grid.pack(fill="x", padx=10, pady=(0, 10))
 
-        # Shortcut Buttons
         shortcuts = [
             ("📊 Status", lambda: self._execute_quick_action("Report full system status")),
             ("🧮 Calc", lambda: self._execute_quick_action("Open calculator")),
@@ -473,7 +503,6 @@ class JarvisHUD(ctk.CTk):
         inner = ctk.CTkFrame(control_frame, fg_color="transparent")
         inner.pack(fill="x", padx=12, pady=10)
 
-        # Glowing Neon Voice Button
         self.voice_btn = ctk.CTkButton(
             inner, 
             text="🎙️ ACTIVATE VOICE", 
@@ -487,7 +516,6 @@ class JarvisHUD(ctk.CTk):
         )
         self.voice_btn.pack(side="left", padx=(0, 10))
 
-        # Command Input
         self.cmd_entry = ctk.CTkEntry(
             inner, 
             placeholder_text="Say 'Hey Jarvis' or enter a command (e.g. 'Open VS Code', 'Play music', 'System report')...",
@@ -499,7 +527,6 @@ class JarvisHUD(ctk.CTk):
         self.cmd_entry.pack(side="left", fill="x", expand=True, padx=(0, 8))
         self.cmd_entry.bind("<Return>", lambda e: self._trigger_text_command())
 
-        # Send Button
         self.send_btn = ctk.CTkButton(
             inner, 
             text="SEND", 
@@ -513,7 +540,6 @@ class JarvisHUD(ctk.CTk):
         )
         self.send_btn.pack(side="left", padx=(0, 8))
 
-        # Settings
         self.settings_btn = ctk.CTkButton(
             inner, 
             text="⚙️", 
@@ -527,7 +553,6 @@ class JarvisHUD(ctk.CTk):
         self.settings_btn.pack(side="left")
 
     def log(self, tag: str, message: str, color_hex: str = None):
-        """Formatted cyber console logging."""
         timestamp = datetime.datetime.now().strftime("%H:%M:%S")
         self.console.configure(state="normal")
         self.console.insert("end", f"[{timestamp}] [{tag}] {message}\n\n")
@@ -540,23 +565,19 @@ class JarvisHUD(ctk.CTk):
         self.console.configure(state="disabled")
 
     def _update_system_metrics(self):
-        """Live Hardware Diagnostics Polling"""
         now = datetime.datetime.now().strftime("%H:%M:%S")
         self.clock_lbl.configure(text=now)
 
         try:
             stats = get_system_diagnostics()
-            # CPU
             cpu = stats["cpu_usage_percent"]
             self.cpu_label.configure(text=f"CPU: {cpu}% ({stats['cpu_threads']} Threads)")
             self.cpu_bar.set(min(cpu / 100.0, 1.0))
             
-            # RAM
             ram_pct = stats["ram_usage_percent"]
             self.ram_label.configure(text=f"RAM: {stats['ram_used_gb']} GB / {stats['ram_total_gb']} GB ({ram_pct}%)")
             self.ram_bar.set(min(ram_pct / 100.0, 1.0))
             
-            # Power
             bat = stats["battery"]
             if bat["present"]:
                 charging = "⚡ Charging" if bat["power_plugged"] else "🔋 Battery"
@@ -571,15 +592,14 @@ class JarvisHUD(ctk.CTk):
         self.after(2000, self._update_system_metrics)
 
     def _boot_greeting(self):
-        """Initial Hologram Online Banner"""
         from core.server import get_local_ip
         local_ip = get_local_ip()
-        self.log("SYSTEM", "J.A.R.V.I.S. Mark VII Core Online. Background Wake Word Listener Active.")
+        self.log("SYSTEM", "J.A.R.V.I.S. Digital AI Core Online. Background Wake Word Listener Active.")
         self.log("MOBILE", f"📱 Mobile Phone Link: http://{local_ip}:5000 (Open in phone browser to install APK)", THEME["cyan"])
         if not jarvis_brain.is_configured():
             self.log("ALERT", "Gemini API Key is not set. Click ⚙️ in the bottom right to paste your free Gemini API key.", THEME["gold"])
         else:
-            self.log("SYSTEM", "All systems nominal, sir. Say 'Hey Jarvis' or enter a command.")
+            self.log("SYSTEM", "All systems nominal, sir. Digital Face initialized. Say 'Hey Jarvis' or click Activate.")
 
     def _execute_quick_action(self, action_text: str):
         if self.is_processing:
@@ -627,20 +647,18 @@ class JarvisHUD(ctk.CTk):
         if self.is_processing:
             return
         self.is_processing = True
-        self.reactor.set_state("WAKING UP", THEME["gold"])
-        self.sound_wave.set_active(True, THEME["gold"])
+        self.ai_face.set_state("WAKING UP", THEME["gold"])
         self.voice_btn.configure(state="disabled", text="LISTENING...")
         self.log("JARVIS", "Yes, sir? I am listening.")
         
         jarvis_voice.speak("Yes sir, I am listening.")
         
-        self.reactor.set_state("LISTENING", THEME["gold"])
+        self.ai_face.set_state("LISTENING", THEME["gold"])
         query = jarvis_voice.listen(timeout=6, phrase_limit=10)
 
         if not query:
             self.log("VOICE", "No speech detected.")
-            self.reactor.set_state("STANDBY", THEME["cyan"])
-            self.sound_wave.set_active(False)
+            self.ai_face.set_state("ONLINE", THEME["cyan"])
             self.voice_btn.configure(state="normal", text="🎙️ ACTIVATE VOICE")
             self.is_processing = False
             return
@@ -667,16 +685,14 @@ class JarvisHUD(ctk.CTk):
     def _manual_voice_worker(self):
         self.is_processing = True
         self.voice_btn.configure(state="disabled", text="LISTENING...")
-        self.reactor.set_state("LISTENING", THEME["gold"])
-        self.sound_wave.set_active(True, THEME["gold"])
+        self.ai_face.set_state("LISTENING", THEME["gold"])
         self.log("VOICE", "Listening for your command...")
 
         query = jarvis_voice.listen(timeout=6, phrase_limit=10)
 
         if not query:
             self.log("VOICE", "No audio detected or speech could not be parsed.")
-            self.reactor.set_state("STANDBY", THEME["cyan"])
-            self.sound_wave.set_active(False)
+            self.ai_face.set_state("ONLINE", THEME["cyan"])
             self.voice_btn.configure(state="normal", text="🎙️ ACTIVATE VOICE")
             self.is_processing = False
             return
@@ -687,28 +703,24 @@ class JarvisHUD(ctk.CTk):
         self.is_processing = True
         self.voice_btn.configure(state="disabled", text="PROCESSING...")
         self.log("USER", query)
-        self.reactor.set_state("THINKING", THEME["arc_blue"])
-        self.sound_wave.set_active(True, THEME["arc_blue"])
+        self.ai_face.set_state("THINKING", THEME["arc_blue"])
 
         def on_action(action_str):
             self.log("ACTION", action_str)
-            self.reactor.set_state("EXECUTING", THEME["green"])
-            self.sound_wave.set_active(True, THEME["green"])
+            self.ai_face.set_state("EXECUTING", THEME["green"])
 
         # Process with Cloud Brain
         response_text = jarvis_brain.process_command(query, on_action_callback=on_action)
 
         # Spoken Response
         self.log(ASSISTANT_NAME, response_text)
-        self.reactor.set_state("SPEAKING", THEME["green"])
-        self.sound_wave.set_active(True, THEME["green"])
+        self.ai_face.set_state("SPEAKING", THEME["green"])
         self.voice_btn.configure(text="SPEAKING...")
 
         jarvis_voice.speak(response_text)
 
         # Reset state
-        self.reactor.set_state("STANDBY", THEME["cyan"])
-        self.sound_wave.set_active(False)
+        self.ai_face.set_state("ONLINE", THEME["cyan"])
         self.voice_btn.configure(state="normal", text="🎙️ ACTIVATE VOICE")
         self.is_processing = False
 
