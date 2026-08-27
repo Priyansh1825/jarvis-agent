@@ -16,13 +16,18 @@ if BASE_DIR not in sys.path:
     sys.path.insert(0, BASE_DIR)
 
 from ui.hud import JarvisHUD
+from core.server import start_mobile_server, get_local_ip
 
 def main():
     print("=" * 60)
     print("  Initializing J.A.R.V.I.S. Mark VII Protocol...")
-    print("  Cloud Brain: Gemini 2.0 Flash")
+    print("  Cloud Brain: Gemini 2.5 Flash")
     print("  Local Hands: Windows System Automation & Media Control")
     print("  Voice Engine: Microsoft Edge Neural TTS (British Butler)")
+    
+    # Start Mobile Link Server
+    mobile_url = start_mobile_server(port=5000)
+    print(f"  📱 Mobile Phone Link: {mobile_url}")
     print("=" * 60)
     
     app = JarvisHUD()
@@ -30,3 +35,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

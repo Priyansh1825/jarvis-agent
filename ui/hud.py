@@ -395,11 +395,15 @@ class JarvisHUD(ctk.CTk):
 
     def _boot_greeting(self):
         """Initial startup welcome sequence."""
+        from core.server import get_local_ip
+        local_ip = get_local_ip()
         self.log("SYSTEM", "J.A.R.V.I.S. Mark VII Core Online. Background Wake Word Listener Active.")
+        self.log("MOBILE", f"📱 Mobile Phone Link: http://{local_ip}:5000 (Open in Chrome on your phone to install APK)", THEME["cyan"])
         if not jarvis_brain.is_configured():
             self.log("ALERT", "Gemini API Key is not set. Click ⚙️ in the bottom right to paste your free Gemini API key.", THEME["gold"])
         else:
             self.log("SYSTEM", f"Ready to serve. Say 'Hey Jarvis' or press '🎙️ ACTIVATE VOICE'.")
+
 
     # ==========================================
     # WAKE WORD LISTENER ENGINE
