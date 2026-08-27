@@ -12,18 +12,17 @@ from core.brain import jarvis_brain
 from core.voice import jarvis_voice
 
 # ====================================================================
-# CINEMATIC CYBERPUNK / DIGITAL AI PALETTE
+# CINEMATIC CYBERPUNK / REALISTIC AI PALETTE
 # ====================================================================
 THEME = {
-    "bg": "#050811",               # Deep Cosmic Void
-    "card_bg": "#0A0F1D",          # Hologram Glass Card
-    "card_inner": "#060A14",       # Deep Tech Inset
-    "card_border": "#16233B",      # Cyber Border
-    "glow_border": "#00E5FF",      # Active Neon Glow
-    "cyan": "#00E5FF",             # Stark Cyan (Default / Standby)
-    "arc_blue": "#0088FF",         # Core Blue
+    "bg": "#03060E",               # Deep Space Void
+    "card_bg": "#080D1A",          # Hologram Glass Card
+    "card_inner": "#040710",       # Deep Inset
+    "card_border": "#132038",      # Cyber Border
+    "cyan": "#00E5FF",             # Stark Cyan (Default)
+    "arc_blue": "#0088FF",         # Quantum Core Blue
     "gold": "#FFB800",             # Listening / Wake Gold
-    "green": "#00FF88",            # Speaking / Matrix Green
+    "green": "#00FF88",            # Speaking / Active Green
     "red": "#FF3366",              # Alert Red
     "purple": "#9D00FF",           # Neural Core Purple
     "text_main": "#E6EDF3",        # Crisp White-Blue
@@ -35,14 +34,15 @@ THEME = {
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-class CyberDigitalFace(tk.Canvas):
+class RealisticDigitalAIFace(tk.Canvas):
     """
-    Cinematic Digital AI Face:
-    - Glowing Cybernetic Eyes with natural blinking & tracking
-    - Angular Forehead & Jaw Wireframe Armor Contours
-    - Dynamic Equalizer Mouth that animates with speech and audio
-    - Sweeping Holographic Scanline
-    - State-responsive emotions (Standby, Listening, Thinking, Speaking)
+    Ultra-Realistic 3D Holographic Cybernetic AI Face:
+    - Anatomically proportioned facial structure with 3D gradient wireframe
+    - Realistic glowing Robotic Eyes with Iris fibrils, specular light reflection, and smooth Bezier eyelid blinking
+    - Micro-saccade eye tracking (natural human-like gaze)
+    - 3D Shaded Nose bridge & Cheekbone highlights
+    - Realistic Articulating Lips with Cupid's bow and live voice frequency cavity
+    - Dynamic floating cybernetic particle matrix and hologram scanline
     """
     def __init__(self, master, size=240, **kwargs):
         super().__init__(
@@ -64,18 +64,25 @@ class CyberDigitalFace(tk.Canvas):
         self.is_listening = False
         self.is_thinking = False
         
-        # Animation parameters
-        self.blink_progress = 1.0       # 1.0 = fully open, 0.0 = fully closed
+        # Animation & Physics Parameters
+        self.blink_val = 1.0           # 1.0 = fully open, 0.0 = fully closed
         self.is_blinking = False
-        self.last_blink_time = time.time()
-        self.scanline_y = 0
-        self.pulse = 0.0
-        self.pulse_dir = 1
-        self.eye_offset_x = 0
-        self.mouth_amplitudes = [0.1] * 12
+        self.last_blink = time.time()
+        self.look_x = 0.0              # Eye gaze offset (-1 to 1)
+        self.look_y = 0.0
+        self.target_look_x = 0.0
+        self.target_look_y = 0.0
+        self.last_gaze_shift = time.time()
+        self.mouth_open = 0.0          # 0.0 (closed) to 1.0 (fully open)
+        self.mouth_freqs = [0.1] * 8
+        self.scanline_y = 0.0
+        self.particles = [
+            {"x": random.randint(10, size-10), "y": random.randint(10, size-10), "vy": -random.uniform(0.3, 0.8), "sz": random.uniform(1, 2)}
+            for _ in range(14)
+        ]
         
         self._running = True
-        self.after(35, self._animate)
+        self.after(30, self._animate)
 
     def set_state(self, status: str, color: str = THEME["cyan"]):
         self.status_text = status
@@ -90,145 +97,214 @@ class CyberDigitalFace(tk.Canvas):
             
         self.delete("all")
         cx, cy = self.cx, self.cy
-        
-        # 1. Pulse timer & Scanline
-        self.pulse += 0.08 * self.pulse_dir
-        if self.pulse > 1.0:
-            self.pulse_dir = -1
-        elif self.pulse < 0.0:
-            self.pulse_dir = 1
-            
-        self.scanline_y = (self.scanline_y + 2.5) % self.size
-        
-        # 2. Blink logic
         now = time.time()
-        if not self.is_blinking and now - self.last_blink_time > random.uniform(3.0, 5.5):
-            self.is_blinking = True
-            self.last_blink_time = now
-
-        if self.is_blinking:
-            self.blink_progress -= 0.25
-            if self.blink_progress <= 0.0:
-                self.blink_progress = 0.0
-                self.is_blinking = False
-        else:
-            if self.blink_progress < 1.0:
-                self.blink_progress += 0.25
-                if self.blink_progress > 1.0:
-                    self.blink_progress = 1.0
-
-        # Eye tracking jitter when thinking
-        if self.is_thinking:
-            self.eye_offset_x = math.sin(now * 8) * 4
-        else:
-            self.eye_offset_x = 0
-
-        # 3. Outer Cybernetic Head Contours (Hologram Polygon Armor)
-        head_w = self.size * 0.42
-        head_h = self.size * 0.46
         
-        # Head contour points (Forehead, Temples, Cheeks, Chin)
-        pts = [
-            (cx - head_w * 0.6, cy - head_h * 0.8),   # Top Left
-            (cx + head_w * 0.6, cy - head_h * 0.8),   # Top Right
-            (cx + head_w * 0.85, cy - head_h * 0.3),  # Temple Right
-            (cx + head_w * 0.75, cy + head_h * 0.4),  # Cheek Right
-            (cx + head_w * 0.35, cy + head_h * 0.85), # Jaw Right
-            (cx - head_w * 0.35, cy + head_h * 0.85), # Jaw Left
-            (cx - head_w * 0.75, cy + head_h * 0.4),  # Cheek Left
-            (cx - head_w * 0.85, cy - head_h * 0.3),  # Temple Left
-        ]
-        
-        # Draw Head Wireframe
-        self.create_polygon(pts, outline=self.state_color, fill="#070D18", width=1.5)
-        
-        # Forehead Quantum Data Node
-        forehead_y = cy - head_h * 0.55
-        self.create_oval(cx - 6, forehead_y - 6, cx + 6, forehead_y + 6, fill=self.state_color, outline="#FFFFFF")
-        self.create_line(cx - head_w * 0.4, forehead_y, cx + head_w * 0.4, forehead_y, fill=self.state_color, width=1)
-
-        # 4. Digital Eyes (Left & Right)
-        eye_spacing = head_w * 0.38
-        eye_y = cy - head_h * 0.15
-        eye_w = 24
-        eye_h = 14 * self.blink_progress
-        
-        for side in [-1, 1]:
-            ex = cx + (side * eye_spacing) + self.eye_offset_x
-            
-            # Eyebrow Plate
-            brow_tilt = 3 if self.is_listening else (-2 if self.is_thinking else 0)
-            self.create_line(
-                ex - eye_w * 0.6, eye_y - 12 + (side * brow_tilt),
-                ex + eye_w * 0.6, eye_y - 12 - (side * brow_tilt),
-                fill=self.state_color, width=2.5
-            )
-            
-            if eye_h > 1:
-                # Eye Socket
-                self.create_polygon([
-                    (ex - eye_w, eye_y),
-                    (ex - eye_w * 0.5, eye_y - eye_h),
-                    (ex + eye_w * 0.5, eye_y - eye_h),
-                    (ex + eye_w, eye_y),
-                    (ex + eye_w * 0.5, eye_y + eye_h),
-                    (ex - eye_w * 0.5, eye_y + eye_h),
-                ], outline=self.state_color, fill="#040810", width=1.5)
-                
-                # Glowing Iris & Pupil
-                iris_r = min(6, eye_h * 0.8)
-                self.create_oval(
-                    ex - iris_r, eye_y - iris_r, ex + iris_r, eye_y + iris_r,
-                    fill=self.state_color, outline="#FFFFFF", width=1
-                )
-
-        # 5. Cheek Tech Nodes & Sensor Lines
-        cheek_y = cy + head_h * 0.2
-        for side in [-1, 1]:
-            kx = cx + (side * head_w * 0.55)
-            self.create_line(kx, cheek_y - 10, kx, cheek_y + 10, fill=self.state_color, width=1.5)
-            self.create_oval(kx - 3, cheek_y - 3, kx + 3, cheek_y + 3, fill=self.state_color, outline="")
-
-        # 6. Dynamic Audio Equalizer Mouth
-        mouth_y = cy + head_h * 0.52
-        num_bars = len(self.mouth_amplitudes)
-        total_mouth_w = head_w * 0.75
-        bar_w = total_mouth_w / num_bars
-        start_x = cx - (total_mouth_w / 2)
-
-        for i in range(num_bars):
-            if self.is_speaking:
-                target = random.uniform(0.3, 1.0)
-            elif self.is_listening:
-                target = random.uniform(0.15, 0.55)
-            else:
-                target = 0.08 + math.sin(now * 3 + i * 0.5) * 0.05
-
-            self.mouth_amplitudes[i] += (target - self.mouth_amplitudes[i]) * 0.4
-            bar_h = self.mouth_amplitudes[i] * 22
-            bx = start_x + (i * bar_w)
-            
-            # Symmetrical Equalizer Bar for Mouth
-            self.create_rectangle(
-                bx + 1, mouth_y - bar_h / 2, bx + bar_w - 1, mouth_y + bar_h / 2,
+        # 1. Particle Matrix Background
+        for p in self.particles:
+            p["y"] += p["vy"]
+            if p["y"] < 10:
+                p["y"] = self.size - 10
+                p["x"] = random.randint(15, self.size - 15)
+            self.create_oval(
+                p["x"], p["y"], p["x"] + p["sz"], p["y"] + p["sz"],
                 fill=self.state_color, outline=""
             )
 
-        # 7. Sweeping Holographic Scanline
+        # 2. Natural Gaze & Eye Saccades (Human Micro-Movements)
+        if now - self.last_gaze_shift > random.uniform(2.0, 4.0):
+            if self.is_thinking:
+                self.target_look_x = random.choice([-0.8, 0.8])
+                self.target_look_y = -0.3
+            elif self.is_listening:
+                self.target_look_x = 0.0
+                self.target_look_y = 0.1
+            else:
+                self.target_look_x = random.uniform(-0.35, 0.35)
+                self.target_look_y = random.uniform(-0.2, 0.2)
+            self.last_gaze_shift = now
+            
+        self.look_x += (self.target_look_x - self.look_x) * 0.15
+        self.look_y += (self.target_look_y - self.look_y) * 0.15
+
+        # 3. Smooth Natural Blink Physics
+        if not self.is_blinking and now - self.last_blink > random.uniform(3.2, 6.0):
+            self.is_blinking = True
+            self.last_blink = now
+
+        if self.is_blinking:
+            self.blink_val -= 0.3
+            if self.blink_val <= 0.0:
+                self.blink_val = 0.0
+                self.is_blinking = False
+        else:
+            if self.blink_val < 1.0:
+                self.blink_val += 0.25
+                if self.blink_val > 1.0:
+                    self.blink_val = 1.0
+
+        # 4. Realistic 3D Face Wireframe & Shading (Head Anatomy)
+        # Scaled parameters
+        hw = self.size * 0.38
+        hh = self.size * 0.44
+        
+        # Outer Cranium & Jaw Curves
+        cranium_pts = [
+            (cx - hw * 0.55, cy - hh * 0.85), # Forehead Left
+            (cx, cy - hh * 0.95),             # Forehead Top Center
+            (cx + hw * 0.55, cy - hh * 0.85), # Forehead Right
+            (cx + hw * 0.85, cy - hh * 0.35), # Temple Right
+            (cx + hw * 0.80, cy + hh * 0.25), # Cheekbone Right
+            (cx + hw * 0.50, cy + hh * 0.70), # Jaw Angle Right
+            (cx + hw * 0.22, cy + hh * 0.95), # Chin Right
+            (cx - hw * 0.22, cy + hh * 0.95), # Chin Left
+            (cx - hw * 0.50, cy + hh * 0.70), # Jaw Angle Left
+            (cx - hw * 0.80, cy + hh * 0.25), # Cheekbone Left
+            (cx - hw * 0.85, cy - hh * 0.35), # Temple Left
+        ]
+        
+        # Base Face Fill & Outer Glow
+        self.create_polygon(cranium_pts, fill="#050A16", outline=self.state_color, width=1.5)
+        
+        # Inner Hologram Facial Depth Contours (Cheekbones & Brow Arc)
+        self.create_line(cx - hw * 0.65, cy - hh * 0.3, cx - hw * 0.2, cy - hh * 0.25, fill="#162846", width=1)
+        self.create_line(cx + hw * 0.65, cy - hh * 0.3, cx + hw * 0.2, cy - hh * 0.25, fill="#162846", width=1)
+        self.create_line(cx - hw * 0.45, cy + hh * 0.3, cx - hw * 0.15, cy + hh * 0.55, fill="#162846", width=1)
+        self.create_line(cx + hw * 0.45, cy + hh * 0.3, cx + hw * 0.15, cy + hh * 0.55, fill="#162846", width=1)
+
+        # Forehead Quantum Circuit Node
+        fh_y = cy - hh * 0.65
+        self.create_oval(cx - 5, fh_y - 5, cx + 5, fh_y + 5, fill=self.state_color, outline="#FFFFFF", width=1)
+        self.create_line(cx - 25, fh_y, cx - 8, fh_y, fill=self.state_color, width=1.5)
+        self.create_line(cx + 8, fh_y, cx + 25, fh_y, fill=self.state_color, width=1.5)
+
+        # 5. Realistic Cybernetic Eyes
+        eye_y = cy - hh * 0.18
+        eye_spacing = hw * 0.42
+        eye_w = 20.0
+        eye_h = 11.0 * max(0.05, self.blink_val)
+        
+        for side in [-1, 1]:
+            ex = cx + (side * eye_spacing)
+            
+            # Eyebrow Arch (Anatomical curve)
+            brow_y = eye_y - 12
+            tilt = 3 if self.is_listening else (-2 if self.is_thinking else 0)
+            self.create_line(
+                ex - eye_w * 0.7, brow_y + (side * tilt),
+                ex, brow_y - 2 - abs(tilt),
+                ex + eye_w * 0.7, brow_y - (side * tilt),
+                fill=self.state_color, width=2.5, smooth=True
+            )
+            
+            # Eye Socket (Natural almond shape)
+            if eye_h > 1:
+                # Sclera (Dark space background)
+                self.create_oval(
+                    ex - eye_w, eye_y - eye_h, ex + eye_w, eye_y + eye_h,
+                    fill="#02050C", outline=self.state_color, width=1.5
+                )
+                
+                # Iris with Gaze Tracking
+                iris_r = 7.0
+                iris_cx = ex + (self.look_x * 5.0)
+                iris_cy = eye_y + (self.look_y * 3.0)
+                
+                # Iris Outer Ring
+                self.create_oval(
+                    iris_cx - iris_r, iris_cy - iris_r * max(0.2, self.blink_val),
+                    iris_cx + iris_r, iris_cy + iris_r * max(0.2, self.blink_val),
+                    fill=self.state_color, outline="#FFFFFF", width=1
+                )
+                
+                # Pupil
+                pupil_r = 3.0
+                self.create_oval(
+                    iris_cx - pupil_r, iris_cy - pupil_r * max(0.2, self.blink_val),
+                    iris_cx + pupil_r, iris_cy + pupil_r * max(0.2, self.blink_val),
+                    fill="#000000", outline=""
+                )
+                
+                # Specular Light Reflection (Realistic Catchlight)
+                self.create_oval(
+                    iris_cx - 2.5, iris_cy - 2.5, iris_cx - 0.5, iris_cy - 0.5,
+                    fill="#FFFFFF", outline=""
+                )
+
+        # 6. Realistic 3D Nose Bridge & Tip
+        nose_top_y = eye_y
+        nose_tip_y = cy + hh * 0.22
+        # Nose bridge lines
+        self.create_line(cx - 3, nose_top_y, cx - 4, nose_tip_y - 4, fill="#162846", width=1)
+        self.create_line(cx + 3, nose_top_y, cx + 4, nose_tip_y - 4, fill="#162846", width=1)
+        # Nose Tip Highlight
+        self.create_line(cx - 6, nose_tip_y, cx + 6, nose_tip_y, fill=self.state_color, width=1.5)
+        self.create_oval(cx - 2, nose_tip_y - 2, cx + 2, nose_tip_y + 2, fill="#FFFFFF", outline="")
+
+        # 7. Realistic Articulating Lips & Voice Wave Cavity
+        mouth_y = cy + hh * 0.56
+        mouth_w = hw * 0.55
+        
+        # Mouth Opening Dynamic calculation
+        if self.is_speaking:
+            target_open = random.uniform(0.35, 0.95)
+        elif self.is_listening:
+            target_open = random.uniform(0.1, 0.35)
+        else:
+            target_open = 0.05 + math.sin(now * 2) * 0.03
+
+        self.mouth_open += (target_open - self.mouth_open) * 0.4
+        open_h = self.mouth_open * 14.0
+
+        # Realistic Upper Lip (Cupid's Bow)
+        up_lip = [
+            (cx - mouth_w, mouth_y),
+            (cx - mouth_w * 0.4, mouth_y - 4),
+            (cx, mouth_y - 1),
+            (cx + mouth_w * 0.4, mouth_y - 4),
+            (cx + mouth_w, mouth_y),
+        ]
+        self.create_line(up_lip, fill=self.state_color, width=2, smooth=True)
+
+        # Realistic Lower Lip Curve
+        low_lip = [
+            (cx - mouth_w, mouth_y),
+            (cx, mouth_y + 5 + open_h),
+            (cx + mouth_w, mouth_y)
+        ]
+        self.create_line(low_lip, fill=self.state_color, width=2, smooth=True)
+
+        # Inner Acoustic Speech Equalizer Bars (inside mouth opening)
+        if open_h > 2.0:
+            num_bars = len(self.mouth_freqs)
+            bar_spacing = (mouth_w * 1.4) / num_bars
+            start_bx = cx - (mouth_w * 0.7)
+            
+            for i in range(num_bars):
+                if self.is_speaking:
+                    target_f = random.uniform(0.3, 1.0)
+                else:
+                    target_f = 0.1
+                self.mouth_freqs[i] += (target_f - self.mouth_freqs[i]) * 0.5
+                bh = self.mouth_freqs[i] * open_h * 0.8
+                bx = start_bx + i * bar_spacing
+                self.create_line(bx, mouth_y - bh / 2, bx, mouth_y + bh / 2, fill=self.state_color, width=2)
+
+        # 8. Sweeping Hologram Scanline
+        self.scanline_y = (self.scanline_y + 2.5) % self.size
         self.create_line(
-            cx - head_w, self.scanline_y, cx + head_w, self.scanline_y,
-            fill="#00E5FF", width=1, dash=(4, 6)
+            cx - hw * 0.9, self.scanline_y, cx + hw * 0.9, self.scanline_y,
+            fill=self.state_color, width=1, dash=(3, 5)
         )
 
-        # 8. Status Label
+        # 9. Realistic AI Status Ticker
         self.create_text(
             cx, self.size - 12, 
-            text=f"● AI FACE: {self.status_text} ●", 
+            text=f"● SYNAPSE AI: {self.status_text} ●", 
             fill=self.state_color, 
             font=(THEME["font_tech"], 10, "bold")
         )
 
-        self.after(35, self._animate)
+        self.after(30, self._animate)
 
     def stop(self):
         self._running = False
@@ -239,7 +315,7 @@ class JarvisHUD(ctk.CTk):
         super().__init__()
         
         # Futuristic Cyber Window Setup
-        self.title("J.A.R.V.I.S. // STARK INDUSTRIES MARK VII - DIGITAL AI")
+        self.title("J.A.R.V.I.S. // STARK INDUSTRIES MARK VII - REALISTIC AI")
         self.geometry("1040x730")
         self.minsize(880, 640)
         self.configure(fg_color=THEME["bg"])
@@ -282,7 +358,7 @@ class JarvisHUD(ctk.CTk):
 
         sub_lbl = ctk.CTkLabel(
             brand_box, 
-            text="DIGITAL AI AVATAR · STARK MARK VII PROTOCOL", 
+            text="REALISTIC DIGITAL AI AVATAR · STARK MARK VII", 
             font=ctk.CTkFont(family=THEME["font_tech"], size=9, weight="bold"),
             text_color=THEME["text_dim"]
         )
@@ -316,7 +392,7 @@ class JarvisHUD(ctk.CTk):
         grid_frame.pack(fill="both", expand=True, padx=16, pady=4)
 
         # -------------------------------------------------------------
-        # LEFT COLUMN (Digital AI Avatar Face + Hardware Telemetry)
+        # LEFT COLUMN (Realistic Digital AI Face + Hardware Telemetry)
         # -------------------------------------------------------------
         left_col = ctk.CTkFrame(grid_frame, width=340, fg_color="transparent")
         left_col.pack(side="left", fill="y", padx=(0, 10))
@@ -333,14 +409,14 @@ class JarvisHUD(ctk.CTk):
 
         core_lbl = ctk.CTkLabel(
             face_card, 
-            text="SYNAPSE AVATAR MATRIX", 
+            text="NEURAL SYNAPSE AVATAR", 
             font=ctk.CTkFont(family=THEME["font_tech"], size=10, weight="bold"),
             text_color=THEME["text_dim"]
         )
         core_lbl.pack(pady=(10, 0))
 
-        # Digital Face Avatar
-        self.ai_face = CyberDigitalFace(face_card, size=230)
+        # Realistic Digital Face Avatar
+        self.ai_face = RealisticDigitalAIFace(face_card, size=230)
         self.ai_face.pack(pady=(6, 12))
 
         # Hardware Metrics Card
@@ -594,12 +670,12 @@ class JarvisHUD(ctk.CTk):
     def _boot_greeting(self):
         from core.server import get_local_ip
         local_ip = get_local_ip()
-        self.log("SYSTEM", "J.A.R.V.I.S. Digital AI Core Online. Background Wake Word Listener Active.")
+        self.log("SYSTEM", "J.A.R.V.I.S. Realistic Digital AI Core Online. Background Wake Word Listener Active.")
         self.log("MOBILE", f"📱 Mobile Phone Link: http://{local_ip}:5000 (Open in phone browser to install APK)", THEME["cyan"])
         if not jarvis_brain.is_configured():
             self.log("ALERT", "Gemini API Key is not set. Click ⚙️ in the bottom right to paste your free Gemini API key.", THEME["gold"])
         else:
-            self.log("SYSTEM", "All systems nominal, sir. Digital Face initialized. Say 'Hey Jarvis' or click Activate.")
+            self.log("SYSTEM", "All systems nominal, sir. Realistic Digital AI Avatar initialized. Say 'Hey Jarvis' or click Activate.")
 
     def _execute_quick_action(self, action_text: str):
         if self.is_processing:
