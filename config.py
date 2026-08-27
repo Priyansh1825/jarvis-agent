@@ -10,7 +10,7 @@ load_dotenv(BASE_DIR / ".env")
 
 # API Keys & Cloud AI Models
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY") or ""
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.0-flash")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 
 # Voice / TTS Settings
 # "en-GB-RyanNeural" is the best authentic British JARVIS voice
