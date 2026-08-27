@@ -1,0 +1,22 @@
+# Environment & Secrets
+.env
+*.env
+
+# Python Cache & Virtual Environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+venv/
+ENV/
+
+# Data & Temp files
+data/temp/
+*.wav
+*.mp3
+
+# Build & OS
+.DS_Store
+Thumbs.db
