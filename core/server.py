@@ -22,7 +22,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from fastapi.staticfiles import StaticFiles
+
 WEB_DIR = BASE_DIR / "web"
+ASSETS_DIR = BASE_DIR / "assets"
 
 class CommandRequest(BaseModel):
     command: str
@@ -36,6 +39,18 @@ async def serve_index():
 async def serve_manifest():
     manifest_file = WEB_DIR / "manifest.json"
     return FileResponse(str(manifest_file))
+
+@app.get("/jarvis_idle.jpg")
+async def get_idle_img():
+    return FileResponse(str(WEB_DIR / "jarvis_idle.jpg"))
+
+@app.get("/jarvis_speaking.jpg")
+async def get_speaking_img():
+    return FileResponse(str(WEB_DIR / "jarvis_speaking.jpg"))
+
+@app.get("/jarvis_listening.jpg")
+async def get_listening_img():
+    return FileResponse(str(WEB_DIR / "jarvis_listening.jpg"))
 
 @app.get("/api/status")
 async def get_status():

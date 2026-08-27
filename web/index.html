@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>J.A.R.V.I.S. Synapse AI</title>
+    <title>J.A.R.V.I.S. Humanoid AI</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00E5FF">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -97,7 +97,7 @@
             gap: 10px;
         }
 
-        /* Digital Face Card */
+        /* Photorealistic Face Card */
         .face-card {
             width: 100%;
             max-width: 400px;
@@ -112,10 +112,56 @@
             box-shadow: 0 8px 32px rgba(0,0,0,0.6);
         }
 
-        .face-canvas-container {
-            width: 230px;
-            height: 230px;
+        .avatar-portal {
+            width: 220px;
+            height: 220px;
+            position: relative;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             cursor: pointer;
+            overflow: hidden;
+            border: 2px solid var(--cyan);
+            box-shadow: 0 0 24px rgba(0, 229, 255, 0.4);
+            transition: border-color 0.4s, box-shadow 0.4s;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        .scanline-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 229, 255, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.04));
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .hologram-ring {
+            position: absolute;
+            width: 234px;
+            height: 234px;
+            border-radius: 50%;
+            border: 1.5px dashed var(--cyan);
+            animation: rotate-ring 12s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotate-ring {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .state-text {
@@ -124,7 +170,7 @@
             font-weight: 700;
             letter-spacing: 2px;
             color: var(--cyan);
-            margin-top: 4px;
+            margin-top: 8px;
         }
 
         /* Lock Screen Mode Badge */
@@ -273,7 +319,7 @@
     <header>
         <div>
             <div class="brand-title">J · A · R · V · I · S</div>
-            <div class="brand-sub">REALISTIC AI SYNAPSE</div>
+            <div class="brand-sub">HUMANOID AI SYNAPSE</div>
         </div>
         <div class="status-badge">
             <div class="status-dot"></div>
@@ -283,12 +329,16 @@
 
     <!-- Main Content -->
     <main>
-        <!-- Realistic Digital Face Card -->
+        <!-- Photorealistic Human AI Face Card -->
         <div class="face-card">
-            <div class="face-canvas-container" onclick="toggleVoice()">
-                <canvas id="faceCanvas" width="230" height="230"></canvas>
+            <div class="hologram-ring" id="holoRing"></div>
+            <div class="avatar-portal" id="avatarPortal" onclick="toggleVoice()">
+                <img id="imgIdle" class="avatar-img" src="/jarvis_idle.jpg" style="opacity: 1;" alt="JARVIS Idle">
+                <img id="imgListen" class="avatar-img" src="/jarvis_listening.jpg" style="opacity: 0;" alt="JARVIS Listening">
+                <img id="imgSpeak" class="avatar-img" src="/jarvis_speaking.jpg" style="opacity: 0;" alt="JARVIS Speaking">
+                <div class="scanline-overlay"></div>
             </div>
-            <div class="state-text" id="stateText">● AI FACE: ONLINE ●</div>
+            <div class="state-text" id="stateText">● HUMAN AI: ONLINE ●</div>
             <div class="wakelock-banner" id="wakeLockStatus">⚡ Background WakeLock Enabled</div>
         </div>
 
@@ -319,7 +369,7 @@
                 <span onclick="clearLog()" style="cursor:pointer; color:var(--text-dim);">CLEAR</span>
             </div>
             <div class="console-log" id="consoleLog">
-                <div>[SYSTEM] Realistic AI Synapse Linked. Tap face or speak to begin.</div>
+                <div>[SYSTEM] Photorealistic Humanoid AI Synapse Linked. Tap portrait or speak to begin.</div>
             </div>
         </div>
 
@@ -342,7 +392,6 @@
         let isListening = false;
         let isSpeaking = false;
         let isThinking = false;
-        let stateColor = "#00E5FF";
         let recognition = null;
         let wakeLock = null;
 
@@ -363,216 +412,43 @@
         // Setup Android Lock Screen Media Session Controls
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: 'J.A.R.V.I.S. Synapse AI',
+                title: 'J.A.R.V.I.S. Humanoid AI',
                 artist: 'Stark Industries Mark VII',
                 album: 'Cloud Assistant Protocol',
-                artwork: [{ src: '/manifest.json', sizes: '512x512', type: 'image/png' }]
+                artwork: [{ src: '/jarvis_idle.jpg', sizes: '512x512', type: 'image/jpeg' }]
             });
 
             navigator.mediaSession.setActionHandler('play', () => toggleVoice());
             navigator.mediaSession.setActionHandler('pause', () => toggleVoice());
-            navigator.mediaSession.setActionHandler('nexttrack', () => sendDirectAction('Report system status'));
+            navigator.mediaSession.setActionHandler('nexttrack', () => executeCommand('Report system status'));
         }
 
-        // ==========================================
-        // REALISTIC DIGITAL FACE CANVAS RENDERER
-        // ==========================================
-        const canvas = document.getElementById('faceCanvas');
-        const ctx = canvas.getContext('2d');
-        const cx = 115, cy = 115;
-        let blinkVal = 1.0;
-        let isBlinking = false;
-        let lastBlink = Date.now();
-        let lookX = 0, lookY = 0;
-        let targetLookX = 0, targetLookY = 0;
-        let lastGazeShift = Date.now();
-        let mouthOpen = 0.0;
-        let scanlineY = 0;
+        function setAIState(text, color) {
+            document.getElementById('stateText').innerText = `● HUMAN AI: ${text} ●`;
+            document.getElementById('stateText').style.color = color;
+            document.getElementById('avatarPortal').style.borderColor = color;
+            document.getElementById('avatarPortal').style.boxShadow = `0 0 28px ${color}66`;
+            document.getElementById('holoRing').style.borderColor = color;
+            document.getElementById('btnText').innerText = text === 'LISTENING' ? 'LISTENING...' : 'ACTIVATE VOICE';
 
-        function drawRealisticFace() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const now = Date.now();
+            const imgIdle = document.getElementById('imgIdle');
+            const imgListen = document.getElementById('imgListen');
+            const imgSpeak = document.getElementById('imgSpeak');
 
-            // 1. Natural Gaze Shifts
-            if (now - lastGazeShift > 3000) {
-                if (isThinking) {
-                    targetLookX = (Math.random() > 0.5 ? 0.7 : -0.7);
-                    targetLookY = -0.3;
-                } else if (isListening) {
-                    targetLookX = 0;
-                    targetLookY = 0.1;
-                } else {
-                    targetLookX = (Math.random() - 0.5) * 0.7;
-                    targetLookY = (Math.random() - 0.5) * 0.4;
-                }
-                lastGazeShift = now;
-            }
-            lookX += (targetLookX - lookX) * 0.15;
-            lookY += (targetLookY - lookY) * 0.15;
-
-            // 2. Smooth Natural Blinking
-            if (!isBlinking && now - lastBlink > 4200) {
-                isBlinking = true;
-                lastBlink = now;
-            }
-            if (isBlinking) {
-                blinkVal -= 0.3;
-                if (blinkVal <= 0) {
-                    blinkVal = 0;
-                    isBlinking = false;
-                }
+            if (text === 'LISTENING') {
+                imgIdle.style.opacity = '0';
+                imgListen.style.opacity = '1';
+                imgSpeak.style.opacity = '0';
+            } else if (text === 'SPEAKING') {
+                imgIdle.style.opacity = '0';
+                imgListen.style.opacity = '0';
+                imgSpeak.style.opacity = '1';
             } else {
-                if (blinkVal < 1.0) blinkVal += 0.25;
+                imgIdle.style.opacity = '1';
+                imgListen.style.opacity = '0';
+                imgSpeak.style.opacity = '0';
             }
-
-            scanlineY = (scanlineY + 2) % 230;
-
-            // 3. Anatomical Head Wireframe & 3D Shading
-            const hw = 86, hh = 96;
-            ctx.strokeStyle = stateColor;
-            ctx.fillStyle = '#050A16';
-            ctx.lineWidth = 1.5;
-
-            ctx.beginPath();
-            ctx.moveTo(cx - hw * 0.55, cy - hh * 0.85);
-            ctx.lineTo(cx, cy - hh * 0.95);
-            ctx.lineTo(cx + hw * 0.55, cy - hh * 0.85);
-            ctx.lineTo(cx + hw * 0.85, cy - hh * 0.35);
-            ctx.lineTo(cx + hw * 0.80, cy + hh * 0.25);
-            ctx.lineTo(cx + hw * 0.50, cy + hh * 0.70);
-            ctx.lineTo(cx + hw * 0.22, cy + hh * 0.95);
-            ctx.lineTo(cx - hw * 0.22, cy + hh * 0.95);
-            ctx.lineTo(cx - hw * 0.50, cy + hh * 0.70);
-            ctx.lineTo(cx - hw * 0.80, cy + hh * 0.25);
-            ctx.lineTo(cx - hw * 0.85, cy - hh * 0.35);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            // Forehead Node
-            const fhy = cy - hh * 0.65;
-            ctx.fillStyle = stateColor;
-            ctx.beginPath();
-            ctx.arc(cx, fhy, 4, 0, Math.PI * 2);
-            ctx.fill();
-
-            // 4. Realistic Eyes
-            const eyeY = cy - hh * 0.18;
-            const eyeSpacing = hw * 0.42;
-            const eyeW = 18;
-            const eyeH = 10 * Math.max(0.05, blinkVal);
-
-            [-1, 1].forEach(side => {
-                const ex = cx + (side * eyeSpacing);
-
-                // Eyebrow Arch
-                const browY = eyeY - 11;
-                const tilt = isListening ? 3 : (isThinking ? -2 : 0);
-                ctx.beginPath();
-                ctx.moveTo(ex - eyeW * 0.7, browY + (side * tilt));
-                ctx.quadraticCurveTo(ex, browY - 2 - Math.abs(tilt), ex + eyeW * 0.7, browY - (side * tilt));
-                ctx.lineWidth = 2.2;
-                ctx.strokeStyle = stateColor;
-                ctx.stroke();
-
-                if (eyeH > 1) {
-                    // Sclera
-                    ctx.beginPath();
-                    ctx.ellipse(ex, eyeY, eyeW, eyeH, 0, 0, Math.PI * 2);
-                    ctx.fillStyle = '#02050C';
-                    ctx.fill();
-                    ctx.lineWidth = 1.5;
-                    ctx.strokeStyle = stateColor;
-                    ctx.stroke();
-
-                    // Iris
-                    const irisR = 6;
-                    const irisX = ex + (lookX * 4);
-                    const irisY = eyeY + (lookY * 2.5);
-
-                    ctx.fillStyle = stateColor;
-                    ctx.beginPath();
-                    ctx.ellipse(irisX, irisY, irisR, irisR * Math.max(0.2, blinkVal), 0, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Pupil
-                    ctx.fillStyle = '#000000';
-                    ctx.beginPath();
-                    ctx.arc(irisX, irisY, 2.5, 0, Math.PI * 2);
-                    ctx.fill();
-
-                    // Specular Light
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.beginPath();
-                    ctx.arc(irisX - 1.5, irisY - 1.5, 1.2, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            });
-
-            // 5. Nose Bridge Highlight
-            const noseTipY = cy + hh * 0.22;
-            ctx.strokeStyle = '#162846';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(cx - 3, eyeY);
-            ctx.lineTo(cx - 3, noseTipY - 3);
-            ctx.moveTo(cx + 3, eyeY);
-            ctx.lineTo(cx + 3, noseTipY - 3);
-            ctx.stroke();
-
-            ctx.strokeStyle = stateColor;
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(cx - 5, noseTipY);
-            ctx.lineTo(cx + 5, noseTipY);
-            ctx.stroke();
-
-            // 6. Realistic Articulating Lips
-            const mouthY = cy + hh * 0.56;
-            const mouthW = hw * 0.55;
-            let targetOpen = 0.05 + Math.sin(now * 0.002) * 0.03;
-            if (isSpeaking) targetOpen = 0.35 + Math.random() * 0.65;
-            else if (isListening) targetOpen = 0.15 + Math.random() * 0.3;
-
-            mouthOpen += (targetOpen - mouthOpen) * 0.4;
-            const openH = mouthOpen * 12;
-
-            // Upper Lip (Cupid's Bow)
-            ctx.strokeStyle = stateColor;
-            ctx.lineWidth = 1.8;
-            ctx.beginPath();
-            ctx.moveTo(cx - mouthW, mouthY);
-            ctx.quadraticCurveTo(cx - mouthW * 0.4, mouthY - 3.5, cx, mouthY - 1);
-            ctx.quadraticCurveTo(cx + mouthW * 0.4, mouthY - 3.5, cx + mouthW, mouthY);
-            ctx.stroke();
-
-            // Lower Lip
-            ctx.beginPath();
-            ctx.moveTo(cx - mouthW, mouthY);
-            ctx.quadraticCurveTo(cx, mouthY + 4 + openH, cx + mouthW, mouthY);
-            ctx.stroke();
-
-            // Equalizer inside mouth cavity
-            if (openH > 2) {
-                for (let i = -3; i <= 3; i++) {
-                    const bh = isSpeaking ? (3 + Math.random() * (openH * 0.8)) : 1.5;
-                    ctx.fillRect(cx + i * 5, mouthY - bh / 2, 2.5, bh);
-                }
-            }
-
-            // Scanline
-            ctx.strokeStyle = stateColor;
-            ctx.setLineDash([3, 5]);
-            ctx.beginPath();
-            ctx.moveTo(cx - hw * 0.9, scanlineY);
-            ctx.lineTo(cx + hw * 0.9, scanlineY);
-            ctx.stroke();
-            ctx.setLineDash([]);
-
-            requestAnimationFrame(drawRealisticFace);
         }
-
-        requestAnimationFrame(drawRealisticFace);
 
         // ==========================================
         // VOICE & COMMAND SYSTEM
@@ -620,13 +496,6 @@
             } else {
                 recognition.start();
             }
-        }
-
-        function setAIState(text, color) {
-            stateColor = color;
-            document.getElementById('stateText').innerText = `● AI FACE: ${text} ●`;
-            document.getElementById('stateText').style.color = color;
-            document.getElementById('btnText').innerText = text === 'LISTENING' ? 'LISTENING...' : 'ACTIVATE VOICE';
         }
 
         function log(tag, message) {
