@@ -12,7 +12,7 @@ from core.brain import jarvis_brain
 from core.voice import jarvis_voice
 
 # ====================================================================
-# CINEMATIC LUMINESCENT HOLOGRAM PALETTE
+# CINEMATIC LUMINESCENT MALE AI HOLOGRAM PALETTE
 # ====================================================================
 THEME = {
     "bg": "#02040A",               # Pitch Black Void
@@ -35,14 +35,14 @@ THEME = {
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-class LuminescentHologramFace(tk.Canvas):
+class MaleLuminescentHologramFace(tk.Canvas):
     """
-    Iconic Luminescent Cyber Hologram Phantom Face:
-    - Glowing white/cyan winged feline eyes with concentric tracking iris
-    - Natural human blink curves and micro-saccade look-around
-    - Luminous articulating lips with speech opening & audio reactivity
-    - Ethereal plasma jawline glow and floating energy flame embers
-    - Blueprint calibration grid and scan streaks
+    Luminescent Chiseled Male AI Hologram Phantom Face (JARVIS):
+    - Strong masculine chiseled jawline & angular chin geometry
+    - Bold, determined masculine cyber brows and piercing concentric glowing eyes
+    - Smooth 2D micro-saccade eye tracking & natural eyelid blinking
+    - Sharp masculine nose bridge and articulating masculine lips with live voice sync
+    - Ethereal floating energy embers, blueprint HUD framing, and holographic scanlines
     """
     def __init__(self, master, size=260, **kwargs):
         super().__init__(
@@ -73,7 +73,7 @@ class LuminescentHologramFace(tk.Canvas):
         self.last_gaze_shift = time.time()
         
         # Blinking Physics
-        self.blink_val = 1.0           # 1.0 = fully open, 0.0 = fully closed
+        self.blink_val = 1.0           # 1.0 = open, 0.0 = closed
         self.is_blinking = False
         self.last_blink = time.time()
         
@@ -81,24 +81,21 @@ class LuminescentHologramFace(tk.Canvas):
         self.mouth_open = 0.0          # 0.0 to 1.0
         self.mouth_freqs = [0.1] * 10
         
-        # Ethereal Plasma Flames & Particles
+        # Floating Plasma Particles
         self.particles = [
             {
-                "x": random.randint(30, size - 30),
-                "y": random.randint(40, size - 40),
-                "vx": random.uniform(-0.3, 0.3),
+                "x": random.randint(25, size - 25),
+                "y": random.randint(35, size - 35),
+                "vx": random.uniform(-0.35, 0.35),
                 "vy": -random.uniform(0.5, 1.2),
-                "sz": random.uniform(1.2, 2.5),
-                "alpha": random.uniform(0.3, 0.9)
+                "sz": random.uniform(1.2, 2.4)
             }
             for _ in range(22)
         ]
         
         # Head Breathing / Micro-float
-        self.head_tilt = 0.0
         self.scanline_y = 0.0
         self.glitch_timer = time.time()
-        self.glitch_offset = 0.0
         
         self._running = True
         self.after(30, self._animate)
@@ -127,21 +124,21 @@ class LuminescentHologramFace(tk.Canvas):
         cx, cy = self.cx, self.cy
         now = time.time()
         
-        # 1. Subtle Head Breathing & Micro-Tilt
+        # 1. Subtle Head Breathing
         breathe = math.sin(now * 2.0) * 1.5
         cy_dyn = cy + breathe
         
-        # 2. Gaze Shift Engine (Human Eye Saccades)
+        # 2. Gaze Shift Engine (Masculine Focused Saccades)
         if now - self.last_gaze_shift > random.uniform(2.5, 4.5):
             if self.is_thinking:
-                self.target_look_x = random.choice([-0.7, 0.7])
+                self.target_look_x = random.choice([-0.65, 0.65])
                 self.target_look_y = -0.3
             elif self.is_listening:
                 self.target_look_x = 0.0
                 self.target_look_y = 0.1
             else:
-                self.target_look_x = random.uniform(-0.4, 0.4)
-                self.target_look_y = random.uniform(-0.25, 0.25)
+                self.target_look_x = random.uniform(-0.35, 0.35)
+                self.target_look_y = random.uniform(-0.2, 0.2)
             self.last_gaze_shift = now
             
         self.look_x += (self.target_look_x - self.look_x) * 0.18
@@ -163,11 +160,9 @@ class LuminescentHologramFace(tk.Canvas):
                 if self.blink_val > 1.0:
                     self.blink_val = 1.0
 
-        # 4. Blueprint Calibration HUD Frame & Ticks
+        # 4. Blueprint Calibration HUD Framing
         pad = 8
         self.create_rectangle(pad, pad, self.size - pad, self.size - pad, outline="#0B1828", width=1)
-        
-        # Tick marks along border
         for i in range(1, 8):
             tx = pad + (self.size - 2 * pad) * (i / 8)
             self.create_line(tx, pad, tx, pad + 4, fill="#12253E", width=1)
@@ -176,112 +171,128 @@ class LuminescentHologramFace(tk.Canvas):
             self.create_line(pad, ty, pad + 4, ty, fill="#12253E", width=1)
             self.create_line(self.size - pad - 4, ty, self.size - pad, ty, fill="#12253E", width=1)
 
-        # 5. Floating Plasma Embers (Rising along face contours)
+        # 5. Floating Plasma Flame Embers
         for p in self.particles:
             p["y"] += p["vy"]
             p["x"] += p["vx"]
             if p["y"] < 20:
-                p["y"] = self.size - 30
-                p["x"] = cx + random.uniform(-60, 60)
+                p["y"] = self.size - 25
+                p["x"] = cx + random.uniform(-65, 65)
             self.create_oval(
                 p["x"], p["y"], p["x"] + p["sz"], p["y"] + p["sz"],
                 fill=self.state_color, outline=""
             )
 
-        # 6. Ethereal Jawline & Cheek Silhouette (Soft Glowing Curves)
-        # Left Glowing Jawline Curve
-        jaw_glow_pts = [
-            (cx - 72, cy_dyn - 30),
-            (cx - 68, cy_dyn + 20),
-            (cx - 48, cy_dyn + 65),
-            (cx - 15, cy_dyn + 92),
-            (cx + 8, cy_dyn + 94),
+        # 6. Chiseled Masculine Jawline, Cheekbones & Chin (Strong Angular Contour)
+        # Left Angular Jaw to Square Chin
+        male_jaw = [
+            (cx - 78, cy_dyn - 32),            # Left Temple
+            (cx - 75, cy_dyn + 20),            # Cheekbone Outer
+            (cx - 56, cy_dyn + 66),            # Sharp Gonial Jaw Angle
+            (cx - 22, cy_dyn + 96),            # Left Square Chin Corner
+            (cx + 22, cy_dyn + 96),            # Right Square Chin Corner
+            (cx + 56, cy_dyn + 66),            # Right Gonial Jaw Angle
+            (cx + 75, cy_dyn + 20),            # Right Cheekbone Outer
+            (cx + 78, cy_dyn - 32),            # Right Temple
         ]
-        # Multi-layer neon bloom for jaw
-        self.create_line(jaw_glow_pts, fill=self.glow_color, width=6, smooth=True)
-        self.create_line(jaw_glow_pts, fill=self.state_color, width=2.5, smooth=True)
-        self.create_line(jaw_glow_pts, fill=THEME["core_white"], width=1, smooth=True)
+        
+        # Multi-layer neon bloom for masculine jawline
+        self.create_line(male_jaw, fill=self.glow_color, width=6, smooth=False)
+        self.create_line(male_jaw, fill=self.state_color, width=2.5, smooth=False)
+        self.create_line(male_jaw, fill=THEME["core_white"], width=1, smooth=False)
 
-        # Right Temple / Cheek Accent Arc
-        r_jaw = [
-            (cx + 68, cy_dyn - 25),
-            (cx + 64, cy_dyn + 15),
-            (cx + 45, cy_dyn + 60)
-        ]
-        self.create_line(r_jaw, fill=self.glow_color, width=3, smooth=True)
+        # Masculine Cheekbone Contour Plates
+        self.create_line(cx - 68, cy_dyn + 10, cx - 35, cy_dyn + 32, fill=self.glow_color, width=2)
+        self.create_line(cx + 68, cy_dyn + 10, cx + 35, cy_dyn + 32, fill=self.glow_color, width=2)
 
-        # 7. Luminous Cat-Eye Flames & Winged Eyebrows
-        eye_y = cy_dyn - 18
+        # Forehead Temple Cyber Circuit
+        fh_y = cy_dyn - 68
+        self.create_oval(cx - 4, fh_y - 4, cx + 4, fh_y + 4, fill=self.state_color, outline="#FFFFFF", width=1)
+        self.create_line(cx - 28, fh_y, cx - 8, fh_y, fill=self.state_color, width=1.5)
+        self.create_line(cx + 8, fh_y, cx + 28, fh_y, fill=self.state_color, width=1.5)
+
+        # 7. Bold Masculine Brows & Piercing Eyes
+        eye_y = cy_dyn - 16
         eye_spacing = 38
-        eye_w = 26
-        eye_h = 14 * max(0.04, self.blink_val)
+        eye_w = 23
+        eye_h = 11.5 * max(0.04, self.blink_val)
 
         for side in [-1, 1]:
             ex = cx + (side * eye_spacing)
             
-            # Winged Flame Eyeliner (Outward Flame Wings)
-            flame_pts = [
-                (ex - side * (eye_w * 0.9), eye_y + 2),       # Inner corner
-                (ex, eye_y - eye_h * 0.7 - 4),                # Upper arch peak
-                (ex + side * (eye_w * 0.9), eye_y - 2),       # Outer corner
-                (ex + side * (eye_w * 1.55), eye_y - 18),     # Flame Wing Tip High
-                (ex + side * (eye_w * 1.25), eye_y - 6),      # Wing base
+            # Bold Angular Masculine Eyebrow (Strong brow ridge)
+            brow_y = eye_y - 12
+            brow_pts = [
+                (ex - side * (eye_w * 0.9), brow_y + 3),       # Inner brow head (low, focused)
+                (ex, brow_y - 2),                             # Brow center arch
+                (ex + side * (eye_w * 0.9), brow_y - 1),      # Brow arch point
+                (ex + side * (eye_w * 1.4), brow_y - 9),      # Cyber tail flare
             ]
             
-            # Glow layers for winged flame
-            self.create_line(flame_pts, fill=self.glow_color, width=7, smooth=True)
-            self.create_line(flame_pts, fill=self.state_color, width=3, smooth=True)
-            self.create_line(flame_pts, fill=THEME["core_white"], width=1.5, smooth=True)
+            self.create_line(brow_pts, fill=self.glow_color, width=6, smooth=False)
+            self.create_line(brow_pts, fill=self.state_color, width=3, smooth=False)
+            self.create_line(brow_pts, fill=THEME["core_white"], width=1.5, smooth=False)
 
-            # Eye Opening Silhouette & Concentric Glowing Iris
-            if eye_h > 1.2:
+            # Masculine Angular Eye Contour
+            if eye_h > 1.0:
+                # Upper Eyelid Arc
+                up_pts = [
+                    (ex - side * (eye_w * 0.85), eye_y + 1),
+                    (ex, eye_y - eye_h * 0.75),
+                    (ex + side * (eye_w * 0.85), eye_y - 1)
+                ]
+                self.create_line(up_pts, fill=self.state_color, width=2.5, smooth=True)
+                self.create_line(up_pts, fill=THEME["core_white"], width=1.2, smooth=True)
+
                 # Lower Eyelid Arc
                 low_pts = [
-                    (ex - side * (eye_w * 0.8), eye_y + 2),
-                    (ex, eye_y + eye_h * 0.8),
-                    (ex + side * (eye_w * 0.8), eye_y - 1)
+                    (ex - side * (eye_w * 0.85), eye_y + 1),
+                    (ex, eye_y + eye_h * 0.75),
+                    (ex + side * (eye_w * 0.85), eye_y - 1)
                 ]
                 self.create_line(low_pts, fill=self.glow_color, width=3, smooth=True)
                 self.create_line(low_pts, fill=self.state_color, width=1.5, smooth=True)
 
-                # Concentric Glowing Iris Rings (Gaze Saccade)
-                iris_cx = ex + (self.look_x * 6.0)
-                iris_cy = eye_y + (self.look_y * 3.5)
+                # Concentric High-Intensity Glowing Iris Rings
+                iris_cx = ex + (self.look_x * 5.5)
+                iris_cy = eye_y + (self.look_y * 3.0)
                 
                 # Outer Iris Glow Ring
-                r1 = 7.5
+                r1 = 6.8
                 self.create_oval(
                     iris_cx - r1, iris_cy - r1 * max(0.2, self.blink_val),
                     iris_cx + r1, iris_cy + r1 * max(0.2, self.blink_val),
                     outline=self.state_color, width=2
                 )
                 
-                # Inner Core Pupil Ring
-                r2 = 3.5
+                # Inner Core Pupil
+                r2 = 3.0
                 self.create_oval(
                     iris_cx - r2, iris_cy - r2 * max(0.2, self.blink_val),
                     iris_cx + r2, iris_cy + r2 * max(0.2, self.blink_val),
                     fill=THEME["core_white"], outline=""
                 )
 
-        # 8. Luminous Nose Contour & Subtle Glow
-        nose_y = cy_dyn + 24
-        # Ambient Nose Light
-        self.create_oval(cx - 8, nose_y - 4, cx + 8, nose_y + 4, fill=self.glow_color, outline="")
-        # Nostril curves
+        # 8. Chiseled Straight Masculine Nose Bridge & Tip
+        nose_y = cy_dyn + 22
+        # Straight dorsal bridge lines
+        self.create_line(cx - 3, eye_y, cx - 4, nose_y - 2, fill="#12253E", width=1.5)
+        self.create_line(cx + 3, eye_y, cx + 4, nose_y - 2, fill="#12253E", width=1.5)
+        
+        # Nostril Wings & Tip
         nose_pts = [
-            (cx - 7, nose_y + 2),
-            (cx - 3, nose_y + 4),
+            (cx - 8, nose_y + 3),
+            (cx - 3, nose_y + 5),
             (cx, nose_y + 2),
-            (cx + 3, nose_y + 4),
-            (cx + 7, nose_y + 2)
+            (cx + 3, nose_y + 5),
+            (cx + 8, nose_y + 3)
         ]
         self.create_line(nose_pts, fill=self.state_color, width=2, smooth=True)
         self.create_oval(cx - 2, nose_y + 1, cx + 2, nose_y + 3, fill=THEME["core_white"], outline="")
 
-        # 9. Luminous Articulating Neon Lips (Moveable Speaking Mouth)
+        # 9. Luminous Masculine Articulating Lips (Speaking Mouth)
         mouth_y = cy_dyn + 56
-        mouth_w = 28
+        mouth_w = 30
         
         # Mouth Opening Dynamic Calculation
         if self.is_speaking:
@@ -292,27 +303,26 @@ class LuminescentHologramFace(tk.Canvas):
             target_open = 0.04 + math.sin(now * 2.5) * 0.03
 
         self.mouth_open += (target_open - self.mouth_open) * 0.42
-        open_h = self.mouth_open * 16.0
+        open_h = self.mouth_open * 15.0
 
-        # Luminous Upper Lip (Cupid's Bow)
+        # Masculine Upper Lip (Crisp, defined center peak)
         up_lip = [
             (cx - mouth_w, mouth_y),
-            (cx - mouth_w * 0.45, mouth_y - 4),
-            (cx, mouth_y - 1.5),
-            (cx + mouth_w * 0.45, mouth_y - 4),
+            (cx - mouth_w * 0.4, mouth_y - 3),
+            (cx, mouth_y - 1),
+            (cx + mouth_w * 0.4, mouth_y - 3),
             (cx + mouth_w, mouth_y)
         ]
-        # Multi-layer neon bloom for upper lip
         self.create_line(up_lip, fill=self.glow_color, width=6, smooth=True)
         self.create_line(up_lip, fill=self.state_color, width=2.5, smooth=True)
         self.create_line(up_lip, fill=THEME["core_white"], width=1, smooth=True)
 
-        # Luminous Lower Lip Plump Contour
+        # Masculine Lower Lip
         low_lip = [
             (cx - mouth_w, mouth_y),
-            (cx - mouth_w * 0.35, mouth_y + 6 + open_h),
-            (cx, mouth_y + 8 + open_h),
-            (cx + mouth_w * 0.35, mouth_y + 6 + open_h),
+            (cx - mouth_w * 0.35, mouth_y + 5 + open_h),
+            (cx, mouth_y + 7 + open_h),
+            (cx + mouth_w * 0.35, mouth_y + 5 + open_h),
             (cx + mouth_w, mouth_y)
         ]
         self.create_line(low_lip, fill=self.glow_color, width=7, smooth=True)
@@ -335,23 +345,17 @@ class LuminescentHologramFace(tk.Canvas):
                 bx = start_bx + i * bar_spacing
                 self.create_line(bx, mouth_y + 2 - bh / 2, bx, mouth_y + 2 + bh / 2, fill=THEME["core_white"], width=1.5)
 
-        # 10. Horizontal Laser Glitch / Scanlines
+        # 10. Horizontal Laser Scanline
         self.scanline_y = (self.scanline_y + 3.0) % self.size
         self.create_line(
             pad, self.scanline_y, self.size - pad, self.scanline_y,
             fill=self.state_color, width=1, dash=(4, 8)
         )
 
-        # Random horizontal glitch streak
-        if now - self.glitch_timer > random.uniform(2.0, 5.0):
-            self.glitch_timer = now
-            gy = random.randint(40, self.size - 40)
-            self.create_line(cx - 70, gy, cx + 70, gy, fill=THEME["core_white"], width=1.5)
-
         # 11. Holographic Status Badge
         self.create_text(
             cx, self.size - 14, 
-            text=f"● SYNAPSE AI: {self.status_text} ●", 
+            text=f"● JARVIS MALE AI: {self.status_text} ●", 
             fill=self.state_color, 
             font=(THEME["font_tech"], 10, "bold")
         )
@@ -367,7 +371,7 @@ class JarvisHUD(ctk.CTk):
         super().__init__()
         
         # Futuristic Cyber Window Setup
-        self.title("J.A.R.V.I.S. // STARK INDUSTRIES MARK VII - LUMINESCENT PHANTOM AI")
+        self.title("J.A.R.V.I.S. // STARK INDUSTRIES MARK VII - MALE AI HOLOGRAM")
         self.geometry("1040x740")
         self.minsize(880, 640)
         self.configure(fg_color=THEME["bg"])
@@ -410,7 +414,7 @@ class JarvisHUD(ctk.CTk):
 
         sub_lbl = ctk.CTkLabel(
             brand_box, 
-            text="LUMINESCENT NEON HOLOGRAM AVATAR · STARK MARK VII", 
+            text="MALE CYBER HOLOGRAM AVATAR · STARK MARK VII", 
             font=ctk.CTkFont(family=THEME["font_tech"], size=9, weight="bold"),
             text_color=THEME["text_dim"]
         )
@@ -439,12 +443,12 @@ class JarvisHUD(ctk.CTk):
         self.cloud_badge.pack(anchor="e")
 
     def _build_main_grid(self):
-        """Two-Column Cyber Layout: Left (Luminescent Face + Gauges), Right (Log + Shortcuts)"""
+        """Two-Column Cyber Layout: Left (Male Hologram Face + Gauges), Right (Log + Shortcuts)"""
         grid_frame = ctk.CTkFrame(self, fg_color="transparent")
         grid_frame.pack(fill="both", expand=True, padx=16, pady=4)
 
         # -------------------------------------------------------------
-        # LEFT COLUMN (Luminescent Moveable Face + Hardware Telemetry)
+        # LEFT COLUMN (Male Moveable Face + Hardware Telemetry)
         # -------------------------------------------------------------
         left_col = ctk.CTkFrame(grid_frame, width=350, fg_color="transparent")
         left_col.pack(side="left", fill="y", padx=(0, 10))
@@ -461,14 +465,14 @@ class JarvisHUD(ctk.CTk):
 
         core_lbl = ctk.CTkLabel(
             face_card, 
-            text="NEURAL SYNAPSE HOLOGRAM", 
+            text="MALE NEURAL SYNAPSE HOLOGRAM", 
             font=ctk.CTkFont(family=THEME["font_tech"], size=10, weight="bold"),
             text_color=THEME["text_dim"]
         )
         core_lbl.pack(pady=(10, 0))
 
-        # Moveable Luminescent Cyber Face Canvas
-        self.ai_face = LuminescentHologramFace(face_card, size=250)
+        # Male Luminescent Cyber Face Canvas
+        self.ai_face = MaleLuminescentHologramFace(face_card, size=250)
         self.ai_face.pack(pady=(6, 12))
 
         # Hardware Metrics Card
@@ -722,12 +726,12 @@ class JarvisHUD(ctk.CTk):
     def _boot_greeting(self):
         from core.server import get_local_ip
         local_ip = get_local_ip()
-        self.log("SYSTEM", "J.A.R.V.I.S. Luminescent Hologram Core Online. Background Wake Word Active.")
+        self.log("SYSTEM", "J.A.R.V.I.S. Male Cyber AI Core Online. Background Wake Word Active.")
         self.log("MOBILE", f"📱 Mobile Phone Link: http://{local_ip}:5000 (Open in phone browser)", THEME["cyan"])
         if not jarvis_brain.is_configured():
             self.log("ALERT", "Gemini API Key is not set. Click ⚙️ in the bottom right to paste your free Gemini API key.", THEME["gold"])
         else:
-            self.log("SYSTEM", "All systems nominal, sir. Luminescent Hologram AI Online. Say 'Hey Jarvis' or click Activate.")
+            self.log("SYSTEM", "All systems nominal, sir. Chiseled Male Hologram Online. Say 'Hey Jarvis' or click Activate.")
 
     def _execute_quick_action(self, action_text: str):
         if self.is_processing:

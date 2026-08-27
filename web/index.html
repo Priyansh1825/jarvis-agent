@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>J.A.R.V.I.S. Luminescent Hologram</title>
+    <title>J.A.R.V.I.S. Male Cyber Hologram</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#00F0FF">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -97,7 +97,7 @@
             gap: 10px;
         }
 
-        /* Luminescent Face Card */
+        /* Male Luminescent Face Card */
         .face-card {
             width: 100%;
             max-width: 400px;
@@ -273,7 +273,7 @@
     <header>
         <div>
             <div class="brand-title">J · A · R · V · I · S</div>
-            <div class="brand-sub">LUMINESCENT PHANTOM AI</div>
+            <div class="brand-sub">MALE CYBER HOLOGRAM</div>
         </div>
         <div class="status-badge">
             <div class="status-dot"></div>
@@ -283,12 +283,12 @@
 
     <!-- Main Content -->
     <main>
-        <!-- Luminescent Hologram Face Card -->
+        <!-- Male Luminescent Hologram Face Card -->
         <div class="face-card">
             <div class="canvas-container" onclick="toggleVoice()">
                 <canvas id="faceCanvas" width="250" height="250"></canvas>
             </div>
-            <div class="state-text" id="stateText">● SYNAPSE AI: ONLINE ●</div>
+            <div class="state-text" id="stateText">● JARVIS MALE AI: ONLINE ●</div>
             <div class="wakelock-banner" id="wakeLockStatus">⚡ Background WakeLock Enabled</div>
         </div>
 
@@ -319,7 +319,7 @@
                 <span onclick="clearLog()" style="cursor:pointer; color:var(--text-dim);">CLEAR</span>
             </div>
             <div class="console-log" id="consoleLog">
-                <div>[SYSTEM] Luminescent Phantom AI Linked. Tap face or speak to begin.</div>
+                <div>[SYSTEM] Male Cyber Hologram AI Linked. Tap face or speak to begin.</div>
             </div>
         </div>
 
@@ -343,7 +343,6 @@
         let isSpeaking = false;
         let isThinking = false;
         let stateColor = "#00F0FF";
-        let glowColor = "rgba(0, 240, 255, 0.45)";
         let recognition = null;
         let wakeLock = null;
 
@@ -364,10 +363,10 @@
         // Setup Android Lock Screen Media Session Controls
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: 'J.A.R.V.I.S. Luminescent AI',
+                title: 'J.A.R.V.I.S. Male AI',
                 artist: 'Stark Industries Mark VII',
                 album: 'Cloud Assistant Protocol',
-                artwork: [{ src: '/jarvis_idle.jpg', sizes: '512x512', type: 'image/jpeg' }]
+                artwork: [{ src: '/manifest.json', sizes: '512x512', type: 'image/png' }]
             });
 
             navigator.mediaSession.setActionHandler('play', () => toggleVoice());
@@ -376,7 +375,7 @@
         }
 
         // ==========================================
-        // LUMINESCENT HOLOGRAM PHANTOM FACE RENDERER
+        // MALE LUMINESCENT HOLOGRAM FACE RENDERER
         // ==========================================
         const canvas = document.getElementById('faceCanvas');
         const ctx = canvas.getContext('2d');
@@ -393,29 +392,29 @@
         const particles = [];
         for (let i = 0; i < 20; i++) {
             particles.push({
-                x: 30 + Math.random() * 190,
-                y: 40 + Math.random() * 170,
+                x: 25 + Math.random() * 200,
+                y: 35 + Math.random() * 180,
                 vx: (Math.random() - 0.5) * 0.5,
                 vy: -(0.5 + Math.random() * 0.8),
-                sz: 1.2 + Math.random() * 1.5
+                sz: 1.2 + Math.random() * 1.4
             });
         }
 
-        function drawLuminescentFace() {
+        function drawMaleFace() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const now = Date.now();
 
             // 1. Natural Gaze Saccades
             if (now - lastGazeShift > 3200) {
                 if (isThinking) {
-                    targetLookX = (Math.random() > 0.5 ? 0.7 : -0.7);
+                    targetLookX = (Math.random() > 0.5 ? 0.65 : -0.65);
                     targetLookY = -0.3;
                 } else if (isListening) {
                     targetLookX = 0;
                     targetLookY = 0.1;
                 } else {
                     targetLookX = (Math.random() - 0.5) * 0.7;
-                    targetLookY = (Math.random() - 0.5) * 0.45;
+                    targetLookY = (Math.random() - 0.5) * 0.4;
                 }
                 lastGazeShift = now;
             }
@@ -463,7 +462,7 @@
                 p.x += p.vx;
                 if (p.y < 20) {
                     p.y = 230;
-                    p.x = cx + (Math.random() - 0.5) * 120;
+                    p.x = cx + (Math.random() - 0.5) * 130;
                 }
                 ctx.fillStyle = stateColor;
                 ctx.beginPath();
@@ -471,65 +470,81 @@
                 ctx.fill();
             });
 
-            // 6. Glowing Ethereal Jawline Curve
+            // 6. Chiseled Masculine Jawline & Square Chin
             ctx.save();
             ctx.shadowColor = stateColor;
             ctx.shadowBlur = 18;
             ctx.strokeStyle = stateColor;
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 2.4;
 
             ctx.beginPath();
-            ctx.moveTo(cx - 70, cyDyn - 28);
-            ctx.quadraticCurveTo(cx - 68, cyDyn + 20, cx - 46, cyDyn + 62);
-            ctx.quadraticCurveTo(cx - 15, cyDyn + 88, cx + 8, cyDyn + 90);
+            ctx.moveTo(cx - 76, cyDyn - 30);
+            ctx.lineTo(cx - 72, cyDyn + 18);
+            ctx.lineTo(cx - 54, cyDyn + 64);
+            ctx.lineTo(cx - 20, cyDyn + 94);
+            ctx.lineTo(cx + 20, cyDyn + 94);
+            ctx.lineTo(cx + 54, cyDyn + 64);
+            ctx.lineTo(cx + 72, cyDyn + 18);
+            ctx.lineTo(cx + 76, cyDyn - 30);
             ctx.stroke();
 
-            // Right temple accent
+            // Cheekbone Plate Lines
+            ctx.strokeStyle = '#12253E';
+            ctx.lineWidth = 1.5;
             ctx.beginPath();
-            ctx.moveTo(cx + 66, cyDyn - 22);
-            ctx.quadraticCurveTo(cx + 62, cyDyn + 15, cx + 44, cyDyn + 55);
+            ctx.moveTo(cx - 66, cyDyn + 10); ctx.lineTo(cx - 35, cyDyn + 30);
+            ctx.moveTo(cx + 66, cyDyn + 10); ctx.lineTo(cx + 35, cyDyn + 30);
             ctx.stroke();
             ctx.restore();
 
-            // 7. Luminous Winged Cat-Eyes & Flame Eyebrows
-            const eyeY = cyDyn - 16;
+            // 7. Bold Masculine Brows & Piercing Eyes
+            const eyeY = cyDyn - 15;
             const eyeSpacing = 36;
-            const eyeW = 24;
-            const eyeH = 13 * Math.max(0.04, blinkVal);
+            const eyeW = 22;
+            const eyeH = 11 * Math.max(0.04, blinkVal);
 
             [-1, 1].forEach(side => {
                 const ex = cx + (side * eyeSpacing);
 
                 ctx.save();
                 ctx.shadowColor = stateColor;
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = 18;
 
-                // Winged Flame Eyeliner
+                // Bold Masculine Eyebrow
+                const browY = eyeY - 11;
                 ctx.beginPath();
-                ctx.moveTo(ex - side * (eyeW * 0.9), eyeY + 2);
-                ctx.quadraticCurveTo(ex, eyeY - eyeH * 0.7 - 4, ex + side * (eyeW * 0.9), eyeY - 2);
-                ctx.quadraticCurveTo(ex + side * (eyeW * 1.2), eyeY - 8, ex + side * (eyeW * 1.5), eyeY - 17);
-                ctx.quadraticCurveTo(ex + side * (eyeW * 1.25), eyeY - 5, ex + side * (eyeW * 0.9), eyeY - 2);
+                ctx.moveTo(ex - side * (eyeW * 0.9), browY + 3);
+                ctx.lineTo(ex, browY - 2);
+                ctx.lineTo(ex + side * (eyeW * 0.9), browY - 1);
+                ctx.lineTo(ex + side * (eyeW * 1.35), browY - 8);
                 ctx.strokeStyle = '#FFFFFF';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 2.2;
                 ctx.stroke();
 
-                if (eyeH > 1.2) {
+                if (eyeH > 1.0) {
+                    // Upper Eyelid Arc
+                    ctx.beginPath();
+                    ctx.moveTo(ex - side * (eyeW * 0.85), eyeY + 1);
+                    ctx.quadraticCurveTo(ex, eyeY - eyeH * 0.75, ex + side * (eyeW * 0.85), eyeY - 1);
+                    ctx.strokeStyle = '#FFFFFF';
+                    ctx.lineWidth = 1.8;
+                    ctx.stroke();
+
                     // Lower Eyelid Arc
                     ctx.beginPath();
-                    ctx.moveTo(ex - side * (eyeW * 0.8), eyeY + 2);
-                    ctx.quadraticCurveTo(ex, eyeY + eyeH * 0.8, ex + side * (eyeW * 0.8), eyeY - 1);
+                    ctx.moveTo(ex - side * (eyeW * 0.85), eyeY + 1);
+                    ctx.quadraticCurveTo(ex, eyeY + eyeH * 0.75, ex + side * (eyeW * 0.85), eyeY - 1);
                     ctx.strokeStyle = stateColor;
-                    ctx.lineWidth = 1.5;
+                    ctx.lineWidth = 1.4;
                     ctx.stroke();
 
                     // Concentric Glowing Iris Rings
-                    const irisX = ex + (lookX * 5.5);
-                    const irisY = eyeY + (lookY * 3.0);
+                    const irisX = ex + (lookX * 5.0);
+                    const irisY = eyeY + (lookY * 2.8);
 
                     // Outer Iris Ring
                     ctx.beginPath();
-                    ctx.ellipse(irisX, irisY, 7, 7 * Math.max(0.2, blinkVal), 0, 0, Math.PI * 2);
+                    ctx.ellipse(irisX, irisY, 6.5, 6.5 * Math.max(0.2, blinkVal), 0, 0, Math.PI * 2);
                     ctx.strokeStyle = stateColor;
                     ctx.lineWidth = 2;
                     ctx.stroke();
@@ -537,15 +552,22 @@
                     // Inner Core Pupil
                     ctx.fillStyle = '#FFFFFF';
                     ctx.beginPath();
-                    ctx.ellipse(irisX, irisY, 3, 3 * Math.max(0.2, blinkVal), 0, 0, Math.PI * 2);
+                    ctx.ellipse(irisX, irisY, 2.8, 2.8 * Math.max(0.2, blinkVal), 0, 0, Math.PI * 2);
                     ctx.fill();
                 }
                 ctx.restore();
             });
 
-            // 8. Luminous Nose Highlight
+            // 8. Straight Masculine Nose Bridge & Tip
             const noseTipY = cyDyn + 22;
             ctx.save();
+            ctx.strokeStyle = '#12253E';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(cx - 3, eyeY); ctx.lineTo(cx - 4, noseTipY - 2);
+            ctx.moveTo(cx + 3, eyeY); ctx.lineTo(cx + 4, noseTipY - 2);
+            ctx.stroke();
+
             ctx.shadowColor = stateColor;
             ctx.shadowBlur = 12;
             ctx.strokeStyle = stateColor;
@@ -562,34 +584,34 @@
             ctx.fill();
             ctx.restore();
 
-            // 9. Luminous Articulating Lips (Moveable Speaking Mouth)
+            // 9. Masculine Articulating Lips
             const mouthY = cyDyn + 54;
-            const mouthW = 26;
+            const mouthW = 28;
 
             let targetOpen = 0.04 + Math.sin(now * 0.003) * 0.03;
             if (isSpeaking) targetOpen = 0.35 + Math.random() * 0.65;
             else if (isListening) targetOpen = 0.12 + Math.random() * 0.3;
 
             mouthOpen += (targetOpen - mouthOpen) * 0.42;
-            const openH = mouthOpen * 15;
+            const openH = mouthOpen * 14;
 
             ctx.save();
             ctx.shadowColor = stateColor;
-            ctx.shadowBlur = 22;
+            ctx.shadowBlur = 20;
 
-            // Upper Lip (Cupid's Bow)
+            // Masculine Upper Lip
             ctx.strokeStyle = '#FFFFFF';
             ctx.lineWidth = 2.2;
             ctx.beginPath();
             ctx.moveTo(cx - mouthW, mouthY);
-            ctx.quadraticCurveTo(cx - mouthW * 0.45, mouthY - 3.5, cx, mouthY - 1.5);
-            ctx.quadraticCurveTo(cx + mouthW * 0.45, mouthY - 3.5, cx + mouthW, mouthY);
+            ctx.quadraticCurveTo(cx - mouthW * 0.4, mouthY - 3, cx, mouthY - 1);
+            ctx.quadraticCurveTo(cx + mouthW * 0.4, mouthY - 3, cx + mouthW, mouthY);
             ctx.stroke();
 
-            // Lower Lip Plump Contour
+            // Masculine Lower Lip
             ctx.beginPath();
             ctx.moveTo(cx - mouthW, mouthY);
-            ctx.quadraticCurveTo(cx, mouthY + 7 + openH, cx + mouthW, mouthY);
+            ctx.quadraticCurveTo(cx, mouthY + 6 + openH, cx + mouthW, mouthY);
             ctx.stroke();
 
             // Equalizer inside mouth cavity
@@ -612,10 +634,10 @@
             ctx.stroke();
             ctx.setLineDash([]);
 
-            requestAnimationFrame(drawLuminescentFace);
+            requestAnimationFrame(drawMaleFace);
         }
 
-        requestAnimationFrame(drawLuminescentFace);
+        requestAnimationFrame(drawMaleFace);
 
         // ==========================================
         // VOICE & COMMAND SYSTEM
@@ -667,7 +689,7 @@
 
         function setAIState(text, color) {
             stateColor = color;
-            document.getElementById('stateText').innerText = `● SYNAPSE AI: ${text} ●`;
+            document.getElementById('stateText').innerText = `● JARVIS MALE AI: ${text} ●`;
             document.getElementById('stateText').style.color = color;
             document.getElementById('stateText').style.textShadow = `0 0 10px ${color}88`;
             document.getElementById('btnText').innerText = text === 'LISTENING' ? 'LISTENING...' : 'ACTIVATE VOICE';
